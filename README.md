@@ -28,7 +28,7 @@
 ### **리포지토리 클론**
 ```bash
 
-$ git clone https://github.com/Leafresh-2024/Leafresh-Backend.git
+$ git clone https://github.com/Afterburner2024/Afterburner-Backend.git
 
 ```
 
@@ -38,7 +38,7 @@ $ git clone https://github.com/Leafresh-2024/Leafresh-Backend.git
 
 ```bash
 
-cd Leafresh-Backend
+cd Afterburner-Backend
 
 ```
 
@@ -121,7 +121,7 @@ gradle dependencies
     > type(타입) : title(제목)
     > 
     
-    ex) feat : main diary update
+    ex) feat : 
     
 
 - **병합 및 충돌 해결 (Merging and Conflict Resolution)**:
