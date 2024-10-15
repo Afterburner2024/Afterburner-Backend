@@ -1,4 +1,4 @@
 package com.afterburner.study.controller;
 
-public class StudytController {
+public class StudyController {
 }
