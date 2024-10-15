@@ -2,6 +2,8 @@ package com.afterburner.community.model;
 
 import java.time.LocalDateTime;
 
+import com.afterburner.common.enums.PostStatus;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -37,7 +39,7 @@ public class Community {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "community_status")
-	private CommunityStatus communityStatus;
+	private PostStatus communityStatus;
 
 	@Column(name = "community_user_id", nullable = false)
 	private Integer communityUserId;
@@ -50,7 +52,7 @@ public class Community {
 
 	public Community(Integer communityId, String communityTitle, String communityContent,
 		LocalDateTime communityCreatedAt,
-		LocalDateTime communityUpdatedAt, LocalDateTime communityDeletedAt, CommunityStatus communityStatus,
+		LocalDateTime communityUpdatedAt, LocalDateTime communityDeletedAt, PostStatus communityStatus,
 		Integer communityUserId, String communityImg) {
 		this.communityId = communityId;
 		this.communityTitle = communityTitle;
@@ -111,11 +113,11 @@ public class Community {
 		this.communityDeletedAt = communityDeletedAt;
 	}
 
-	public CommunityStatus getCommunityStatus() {
+	public PostStatus getCommunityStatus() {
 		return communityStatus;
 	}
 
-	public void setCommunityStatus(CommunityStatus communityStatus) {
+	public void setCommunityStatus(PostStatus communityStatus) {
 		this.communityStatus = communityStatus;
 	}
 
