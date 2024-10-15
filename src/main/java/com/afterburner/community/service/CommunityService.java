@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.afterburner.common.enums.PostStatus;
 import com.afterburner.community.model.Community;
 import com.afterburner.community.model.CommunityDTO;
-import com.afterburner.community.model.CommunityStatus;
 import com.afterburner.community.repository.CommunityRepository;
 
 @Service
@@ -31,7 +31,7 @@ public class CommunityService {
 		community.setCommunityContent(communityDTO.getCommunityContent());
 		community.setCommunityCreatedAt(communityDTO.getCommunityCreatedAt());
 		community.setCommunityUserId(communityDTO.getCommunityUserId());
-		community.setCommunityStatus(CommunityStatus.DEFAULT);
+		community.setCommunityStatus(PostStatus.DEFAULT);
 		community.setCommunityImg(communityDTO.getCommunityImg());
 
 		// 게시글 저장
@@ -98,7 +98,7 @@ public class CommunityService {
 			.orElseThrow(() -> new RuntimeException("해당 ID의 게시글을 찾을 수 없습니다."));
 
 		// 상태를 DELETED로 변경
-		community.setCommunityStatus(CommunityStatus.DELETED);
+		community.setCommunityStatus(PostStatus.DELETED);
 		community.setCommunityDeletedAt(LocalDateTime.now());
 
 		// 상태가 변경된 게시글 저장

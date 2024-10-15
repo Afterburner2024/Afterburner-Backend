@@ -2,6 +2,8 @@ package com.afterburner.community.model;
 
 import java.time.LocalDateTime;
 
+import com.afterburner.common.enums.PostStatus;
+
 public class CommunityDTO {
 
 	private Integer communityId;
@@ -10,7 +12,7 @@ public class CommunityDTO {
 	private LocalDateTime communityCreatedAt;
 	private LocalDateTime communityUpdatedAt;
 	private LocalDateTime communityDeletedAt;
-	private CommunityStatus communityStatus;
+	private PostStatus communityStatus;
 	private Integer communityUserId;
 	private String communityImg;
 
@@ -19,7 +21,7 @@ public class CommunityDTO {
 
 	public CommunityDTO(Integer communityId, String communityTitle, String communityContent,
 		LocalDateTime communityCreatedAt, LocalDateTime communityUpdatedAt, LocalDateTime communityDeletedAt,
-		CommunityStatus communityStatus, Integer communityUserId, String communityImg) {
+		PostStatus communityStatus, Integer communityUserId, String communityImg) {
 		this.communityId = communityId;
 		this.communityTitle = communityTitle;
 		this.communityContent = communityContent;
@@ -79,11 +81,11 @@ public class CommunityDTO {
 		this.communityDeletedAt = communityDeletedAt;
 	}
 
-	public CommunityStatus getCommunityStatus() {
+	public PostStatus getCommunityStatus() {
 		return communityStatus;
 	}
 
-	public void setCommunityStatus(CommunityStatus communityStatus) {
+	public void setCommunityStatus(PostStatus communityStatus) {
 		this.communityStatus = communityStatus;
 	}
 
