@@ -12,6 +12,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 @Entity
@@ -37,17 +39,15 @@ public class StudyGroupEntity {
 	private LocalDateTime studyGroupCreatedAt;
 
 	@Column(name = "studygroup_updated_at")
-	@UpdateTimestamp
 	private LocalDateTime studyGroupUpdatedAt;
 
 	@Column(name = "studygroup_deleted_at")
-	@UpdateTimestamp
 	private LocalDateTime studyGroupDeletedAt;
 
-	@Column(name = "studygroup_status", nullable = false)
+	@Column(name = "studygroup_status", nullable = false) // 기본값, 삭제상태, 신고된 상태
 	private PostStatus studyGroupStatus;
 
-	@Column(name = "studygroup_user_id", nullable = false)
+	@Column(name = "studygroup_user_id", nullable = false) // 작성자 ID
 	private Integer studyGroupUserId;
 
 	public StudyGroupEntity() {
@@ -74,12 +74,20 @@ public class StudyGroupEntity {
 		}
 
 		public Builder studyGroupTitle(String studyGroupTitle){
-			this.studyGroupTitle = studyGroupTitle;
+			if (studyGroupTitle.length() > 30) {
+				throw new IllegalArgumentException("제목은 30자 미만만 가능합니다.");
+			} else {
+				this.studyGroupTitle = studyGroupTitle;
+			}
 			return this;
 		}
 
 		public Builder studyGroupContent(String studyGroupContent){
-			this.studyGroupContent = studyGroupContent;
+			if (studyGroupContent.length() > 5000) {
+				throw new IllegalArgumentException("내용은 5000자 미만만 가능합니다.");
+			} else {
+				this.studyGroupContent = studyGroupContent;
+			}
 			return this;
 		}
 
@@ -94,6 +102,9 @@ public class StudyGroupEntity {
 		}
 
 		public StudyGroupEntity build(){
+			if (studyGroupCategory == null || studyGroupTitle == null || studyGroupContent == null) {
+				throw new IllegalArgumentException("모든 필드를 채워주세요.");
+			}
 			return new StudyGroupEntity(this);
 		}
 	}
@@ -168,6 +179,16 @@ public class StudyGroupEntity {
 
 	public void setStudyGroupUserId(Integer studyGroupUserId) {
 		this.studyGroupUserId = studyGroupUserId;
+	}
+
+	@PrePersist // 엔티티에 처음 저장될 때에만 동작함
+	public void prePersist() {
+		this.studyGroupUpdatedAt = null; // 수정칸은 비어있도록
+	}
+
+	@PreUpdate // 엔티티가 수정될때 호출됨
+	public void preUpdate() {
+		this.studyGroupUpdatedAt = LocalDateTime.now(); // 수정될때는 현재 시간으로 호출되게 함
 	}
 
 	@Override
