@@ -2,6 +2,8 @@ package com.afterburner.community.model;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.afterburner.common.enums.PostStatus;
 
 import jakarta.persistence.Column;
@@ -12,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jdk.jfr.Timestamp;
 
 @Entity
 @Table(name = "community")
@@ -29,6 +32,7 @@ public class Community {
 	private String communityContent;
 
 	@Column(name = "community_created_at")
+	@CreationTimestamp
 	private LocalDateTime communityCreatedAt;
 
 	@Column(name = "community_updated_at")

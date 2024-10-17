@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.afterburner.common.codes.ErrorCode;
+import com.afterburner.common.codes.SuccessCode;
+import com.afterburner.common.response.ApiResponse;
+import com.afterburner.common.response.ErrorResponse;
 import com.afterburner.community.model.Community;
 import com.afterburner.community.model.CommunityDTO;
 import com.afterburner.community.service.CommunityService;
@@ -30,44 +34,103 @@ public class CommunityController {
 	}
 
 	// 게시글 등록
-	@PostMapping("/post")
-	public ResponseEntity<Community> createCommunityPost(@RequestBody CommunityDTO communityDTO) {
+	@PostMapping
+	public ResponseEntity<?> createCommunityPost(@RequestBody CommunityDTO communityDTO) {
+		if (communityDTO == null) {
+			return ResponseEntity.status(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus())
+				.body(ErrorCode.REQUEST_BODY_MISSING_ERROR.getMessage());
+		}
 
 		// 현재 시간으로 게시글 생성 시간 설정
 		communityDTO.setCommunityCreatedAt(LocalDateTime.now());
 
 		Community createdPost = communityService.createPost(communityDTO);
 
-		return ResponseEntity.ok(createdPost);
+		if (createdPost != null) {
+			ApiResponse<Community> response = new ApiResponse.Builder<Community>()
+				.statusCode(SuccessCode.INSERT.getStatus())
+				.message(SuccessCode.INSERT.getMessage())
+				.result(createdPost)
+				.build();
+			return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(response);
+		} else {
+			return ResponseEntity.status(ErrorCode.INSERT_ERROR.getStatus())
+				.body(ErrorCode.INSERT_ERROR.getMessage());
+		}
 	}
 
 	// 전체 게시글 조회
-	@GetMapping()
-	public ResponseEntity<List<CommunityDTO>> getAllCommunities() {
+	@GetMapping
+	public ResponseEntity<?> getAllCommunities() {
 		List<CommunityDTO> communities = communityService.getAllCommunities();
-		return ResponseEntity.ok(communities);
+
+		if (communities != null && !communities.isEmpty()) {
+			ApiResponse<List<CommunityDTO>> response = new ApiResponse.Builder<List<CommunityDTO>>()
+				.statusCode(SuccessCode.SELECT.getStatus())
+				.message(SuccessCode.SELECT.getMessage())
+				.result(communities)
+				.build();
+			return ResponseEntity.ok(response);
+		} else {
+			return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
+				.body(ErrorCode.NOT_FOUND_ERROR.getMessage());
+		}
 	}
 
 	// 상세조회
 	@GetMapping("/{id}")
-	public ResponseEntity<CommunityDTO> getCommunityById(@PathVariable("id") Integer communityId) {
+	public ResponseEntity<?> getCommunityById(@PathVariable("id") Integer communityId) {
 		CommunityDTO communityDTO = communityService.getCommunityById(communityId);
-		return ResponseEntity.ok(communityDTO);
+
+		if (communityDTO != null) {
+			ApiResponse<CommunityDTO> response = new ApiResponse.Builder<CommunityDTO>()
+				.statusCode(SuccessCode.SELECT.getStatus())
+				.message(SuccessCode.SELECT.getMessage())
+				.result(communityDTO)
+				.build();
+			return ResponseEntity.ok(response);
+		} else {
+			return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
+				.body(ErrorCode.NOT_FOUND_ERROR.getMessage());
+		}
 	}
 
 	// 수정
 	@PutMapping("/{id}")
-	public ResponseEntity<Community> updateCommunityPost(@PathVariable("id") Integer communityId,
+	public ResponseEntity<?> updateCommunityPost(@PathVariable("id") Integer communityId,
 		@RequestBody CommunityDTO communityDTO) {
 		Community updatedPost = communityService.updatePost(communityId, communityDTO);
-		return ResponseEntity.ok(updatedPost);
+
+		if (updatedPost != null) {
+			ApiResponse<Community> response = new ApiResponse.Builder<Community>()
+				.statusCode(SuccessCode.UPDATE.getStatus())
+				.message(SuccessCode.UPDATE.getMessage())
+				.result(updatedPost)
+				.build();
+			return ResponseEntity.ok(response);
+		} else {
+			return ResponseEntity.status(ErrorCode.UPDATE_ERROR.getStatus())
+				.body(ErrorCode.UPDATE_ERROR.getMessage());
+		}
 	}
 
 	// 삭제
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteCommunity(@PathVariable("id") Integer communityId) {
-		communityService.deletePost(communityId);
-		return ResponseEntity.noContent().build();
+	public ResponseEntity<?> deleteCommunity(@PathVariable("id") Integer communityId) {
+
+		boolean isDeleted = communityService.deletePost(communityId);
+
+		if (isDeleted) {
+			ApiResponse<Void> response = new ApiResponse.Builder<Void>()
+				.statusCode(SuccessCode.DELETE.getStatus())
+				.message(SuccessCode.DELETE.getMessage())
+				.result(null)
+				.build();
+			return ResponseEntity.status(SuccessCode.DELETE.getStatus()).body(response);
+		} else {
+			return ResponseEntity.status(ErrorCode.DELETE_ERROR.getStatus())
+				.body(ErrorCode.DELETE_ERROR.getMessage());
+		}
 	}
 
 	// 댓글
