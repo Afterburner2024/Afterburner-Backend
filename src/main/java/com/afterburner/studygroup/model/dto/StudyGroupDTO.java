@@ -4,9 +4,7 @@ import java.time.LocalDateTime;
 
 import com.afterburner.common.enums.PostStatus;
 import com.afterburner.studygroup.model.entity.StudyGroupCategory;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class StudyGroupDTO {
 
@@ -14,7 +12,11 @@ public class StudyGroupDTO {
 	private StudyGroupCategory studyGroupCategory;
 	private String studyGroupTitle;
 	private String studyGroupContent;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDateTime studyGroupCreatedAt;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDateTime studyGroupUpdatedAt;
 	private PostStatus studyGroupStatus;
 	private Integer studyGroupUserId;
