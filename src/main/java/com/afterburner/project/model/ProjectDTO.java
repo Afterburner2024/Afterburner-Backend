@@ -16,10 +16,11 @@ public class ProjectDTO {
 	private Integer projectId;
 
 	@NotEmpty(message = "프로젝트 제목은 필수입니다.")
-	@Size(max = 100, message = "프로젝트 제목은 100자 이내여야 합니다.")
+	@Size(max = 30, message = "프로젝트 제목은 30자 이내여야 합니다.")
 	private String projectTitle;
 
 	@NotEmpty(message = "프로젝트 내용은 필수입니다.")
+	@Size(max = 5000, message = "내용은 5000자 이내여야 합니다.")
 	private String projectContent;
 
 	private String projectLink;
@@ -42,7 +43,7 @@ public class ProjectDTO {
 	@NotNull(message = "프로젝트 기술 스택은 필수입니다.")
 	private List<String> projectTechStack;
 
-	@NotNull(message = "사용자 ID는 필수입니다.") // null이 아니어야 함
+	@NotNull(message = "사용자 ID는 필수입니다.")
 	private Integer projectUserId;
 
 	public ProjectDTO() {

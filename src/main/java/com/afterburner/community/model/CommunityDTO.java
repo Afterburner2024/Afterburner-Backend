@@ -5,11 +5,20 @@ import java.time.LocalDateTime;
 import com.afterburner.common.enums.PostStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class CommunityDTO {
 
 	private Integer communityId;
+
+	@NotEmpty(message = "게시글 제목은 필수입니다.")
+	@Size(max = 50, message = "게시글 제목은 50자 이내여야 합니다.")
 	private String communityTitle;
-	private String communityContent;
+
+	@NotEmpty(message = "게시글 내용은 필수입니다.")
+	@Size(max = 3000, message = "게시글 내용은 3000자 이내여야 합니다.")private String communityContent;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDateTime communityCreatedAt;
@@ -20,8 +29,12 @@ public class CommunityDTO {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDateTime communityDeletedAt;
 
+	@NotNull(message = "자유게시판 게시글 상태는 필수입니다.")
 	private PostStatus communityStatus;
+
+	@NotNull(message = "유저 id는 필수입니다.")
 	private Integer communityUserId;
+
 	private String communityImg;
 
 	public CommunityDTO() {
