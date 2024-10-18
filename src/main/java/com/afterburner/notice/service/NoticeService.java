@@ -71,7 +71,7 @@ public class NoticeService {
 			.orElseThrow(() -> new RuntimeException("공지사항을 찾을 수 없습니다."));
 
 		if (notice.getNoticeStatus() != PostStatus.DEFAULT) {
-			throw new RuntimeException("삭제된 공지사항이다.");
+			throw new RuntimeException("삭제된 공지사항입니다.");
 		}
 
 		return new NoticeDTO(
@@ -109,13 +109,25 @@ public class NoticeService {
 	}
 
 	// 공지사항 삭제
-	public void deleteNotice(Integer noticeId) {
+	public NoticeDTO deleteNotice(Integer noticeId) {
 		Notice notice = noticeRepository.findById(noticeId)
 			.orElseThrow(() -> new RuntimeException("공지사항을 찾을 수 없습니다."));
 
+		// 공지사항 상태를 삭제된 상태로 변경
 		notice.setNoticeStatus(PostStatus.DELETED);
 		notice.setNoticeDeletedAt(LocalDateTime.now());
 
-		noticeRepository.save(notice);
+		Notice deletedNotice = noticeRepository.save(notice);
+
+		// 삭제된 공지사항 정보를 반환
+		return new NoticeDTO(
+			deletedNotice.getNoticeId(),
+			deletedNotice.getNoticeTitle(),
+			deletedNotice.getNoticeContent(),
+			deletedNotice.getNoticeStatus(),
+			deletedNotice.getNoticeCreatedAt(),
+			deletedNotice.getNoticeUpdatedAt(),
+			deletedNotice.getNoticeDeletedAt()
+		);
 	}
 }

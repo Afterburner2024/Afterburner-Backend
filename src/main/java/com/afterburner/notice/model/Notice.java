@@ -2,6 +2,8 @@ package com.afterburner.notice.model;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.afterburner.common.enums.PostStatus;
 
 import jakarta.persistence.Column;
@@ -33,6 +35,7 @@ public class Notice {
 	private PostStatus noticeStatus;
 
 	@Column(name = "notice_created_at", nullable = false)
+	@CreationTimestamp
 	private LocalDateTime noticeCreatedAt;
 
 	@Column(name = "notice_updated_at")
