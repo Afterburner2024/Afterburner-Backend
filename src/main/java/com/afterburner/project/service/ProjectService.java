@@ -28,6 +28,7 @@ public class ProjectService {
 		this.projectRepository = projectRepository;
 	}
 
+	// 필수 값 검증해서 로그에 남길려고 만든거임... 필요 없어지거나 리소스 많이 먹으면 삭제하던지 해야 할 듯?
 	private void validateProjectDTO(ProjectDTO projectDTO) {
 		if (projectDTO.getProjectTitle() == null || projectDTO.getProjectContent() == null) {
 			logger.warn("제목 또는 내용이 없습니다. 제목: {}, 내용: {}", projectDTO.getProjectTitle(), projectDTO.getProjectContent());
@@ -49,17 +50,11 @@ public class ProjectService {
 			.projectUserId(projectDTO.getProjectUserId())
 			.build();
 
-		// 기술 스택 설정
 		project.setProjectTechStack(projectDTO.getProjectTechStack());
-
 		projectRepository.save(project);
 		logger.info("프로젝트가 성공적으로 등록되었습니다. ID: {}", project.getProjectId());
 
 		// DTO 생성 및 반환
-		return convertToDTO(project);
-	}
-
-	private ProjectDTO convertToDTO(Project project) {
 		return new ProjectDTO(
 			project.getProjectId(),
 			project.getProjectTitle(),
@@ -79,7 +74,19 @@ public class ProjectService {
 	public List<ProjectDTO> getAllProjects() {
 		logger.info("모든 프로젝트를 조회 중입니다.");
 		return projectRepository.findAll().stream()
-			.map(this::convertToDTO)
+			.map(project -> new ProjectDTO(
+				project.getProjectId(),
+				project.getProjectTitle(),
+				project.getProjectContent(),
+				project.getProjectLink(),
+				project.getProjectCreatedAt(),
+				project.getProjectUpdatedAt(),
+				project.getProjectDeletedAt(),
+				project.getProjectFinishedAt(),
+				project.getProjectStatus(),
+				project.getProjectTechStack(),
+				project.getProjectUserId()
+			))
 			.collect(Collectors.toList());
 	}
 
@@ -90,7 +97,19 @@ public class ProjectService {
 			.orElseThrow(() -> new ProjectNotFoundException("사이드 프로젝트 게시글을 찾을 수 없습니다. ID: " + projectId));
 
 		logger.info("ID: {}의 프로젝트를 성공적으로 조회하였습니다.", projectId);
-		return convertToDTO(project);
+		return new ProjectDTO(
+			project.getProjectId(),
+			project.getProjectTitle(),
+			project.getProjectContent(),
+			project.getProjectLink(),
+			project.getProjectCreatedAt(),
+			project.getProjectUpdatedAt(),
+			project.getProjectDeletedAt(),
+			project.getProjectFinishedAt(),
+			project.getProjectStatus(),
+			project.getProjectTechStack(),
+			project.getProjectUserId()
+		);
 	}
 
 	// 게시글 수정
@@ -112,7 +131,19 @@ public class ProjectService {
 		projectRepository.save(project);
 		logger.info("ID: {}의 프로젝트가 성공적으로 수정되었습니다.", projectId);
 
-		return convertToDTO(project);
+		return new ProjectDTO(
+			project.getProjectId(),
+			project.getProjectTitle(),
+			project.getProjectContent(),
+			project.getProjectLink(),
+			project.getProjectCreatedAt(),
+			project.getProjectUpdatedAt(),
+			project.getProjectDeletedAt(),
+			project.getProjectFinishedAt(),
+			project.getProjectStatus(),
+			project.getProjectTechStack(),
+			project.getProjectUserId()
+		);
 	}
 
 	// 논리적 삭제
@@ -128,3 +159,4 @@ public class ProjectService {
 		logger.info("ID: {}의 프로젝트가 성공적으로 삭제되었습니다.", projectId);
 	}
 }
+
