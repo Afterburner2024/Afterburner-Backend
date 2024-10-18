@@ -33,6 +33,7 @@ public class CommunityController {
 		this.communityService = communityService;
 	}
 
+	// 이미지 등록 파일질라로 변경해야함.
 	// 게시글 등록
 	@PostMapping
 	public ResponseEntity<?> createCommunityPost(@RequestBody CommunityDTO communityDTO) {
@@ -117,19 +118,27 @@ public class CommunityController {
 	// 삭제
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteCommunity(@PathVariable("id") Integer communityId) {
+		// 요청된 id 값이 null이거나 0 이하인 경우 유효하지 않은 요청 처리
+		if (communityId == null || communityId <= 0) {
+			return ResponseEntity.status(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getStatus())
+				.body(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getMessage());
+		}
 
-		boolean isDeleted = communityService.deletePost(communityId);
 
-		if (isDeleted) {
-			ApiResponse<Void> response = new ApiResponse.Builder<Void>()
+		CommunityDTO deletedCommunity = communityService.deletePost(communityId);
+
+		// 삭제 성공 시
+		if (deletedCommunity != null) {
+			ApiResponse<CommunityDTO> response = new ApiResponse.Builder<CommunityDTO>()
 				.statusCode(SuccessCode.DELETE.getStatus())
 				.message(SuccessCode.DELETE.getMessage())
-				.result(null)
+				.result(deletedCommunity)  // 삭제된 게시글 정보를 응답으로 전달
 				.build();
 			return ResponseEntity.status(SuccessCode.DELETE.getStatus()).body(response);
 		} else {
-			return ResponseEntity.status(ErrorCode.DELETE_ERROR.getStatus())
-				.body(ErrorCode.DELETE_ERROR.getMessage());
+			// 삭제 실패 시
+			return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus())
+				.body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
 		}
 	}
 
