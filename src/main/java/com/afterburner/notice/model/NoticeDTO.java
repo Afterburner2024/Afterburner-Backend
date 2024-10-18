@@ -3,15 +3,34 @@ package com.afterburner.notice.model;
 import java.time.LocalDateTime;
 
 import com.afterburner.common.enums.PostStatus;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class NoticeDTO {
 
 	private Integer noticeId;
+
+	@NotEmpty(message = "공지사항 제목은 필수입니다.")
+	@Size(max = 50, message = "프로젝트 제목은 50자 이내여야 합니다.")
 	private String noticeTitle;
+
+	@NotEmpty(message = "공지사항 내용은 필수 입니다.")
+	@Size(max = 5000, message = "공지사항 내용은 5000자 이내여야 합니다.")
 	private String noticeContent;
+
+	@NotNull(message = "공지상태는 필수입니다.")
 	private PostStatus noticeStatus;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDateTime noticeCreatedAt;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDateTime noticeUpdatedAt;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDateTime noticeDeletedAt;
 
 	public NoticeDTO() {
