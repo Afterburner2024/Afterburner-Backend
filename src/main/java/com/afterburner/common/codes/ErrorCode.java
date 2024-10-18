@@ -64,6 +64,9 @@ public enum ErrorCode {
     // Transaction Update Error
     UPDATE_ERROR(200, "Update Transaction Error Exception"),
 
+    // 변환 오류
+    CONVERSION_ERROR(400, "JsonB 변환 오류 발생"),
+
     // Transaction Delete Error
     DELETE_ERROR(200, "Delete Transaction Error Exception"); // End
 
