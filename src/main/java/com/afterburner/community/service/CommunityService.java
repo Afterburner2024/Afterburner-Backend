@@ -121,23 +121,30 @@ public class CommunityService {
 
 	// 게시글 삭제 (상태 변경)
 	@Transactional
-	public boolean deletePost(Integer communityId) {
-		Optional<Community> communityOptional = communityRepository.findById(communityId);
-
-		if (!communityOptional.isPresent()) {
-			return false;  // 게시글이 존재하지 않으면 false 반환
-		}
-
-		Community community = communityOptional.get();
+	public CommunityDTO deletePost(Integer communityId) {
+		// 게시글 확인
+		Community community = communityRepository.findById(communityId)
+			.orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 
 		// 상태를 DELETED로 변경
 		community.setCommunityStatus(PostStatus.DELETED);
 		community.setCommunityDeletedAt(LocalDateTime.now());
 
 		// 상태가 변경된 게시글 저장
-		communityRepository.save(community);
+		Community deletedCommunity = communityRepository.save(community);
 
-		return true;  // 삭제 성공 시 true 반환
+		return new CommunityDTO(
+			deletedCommunity.getCommunityId(),
+			deletedCommunity.getCommunityTitle(),
+			deletedCommunity.getCommunityContent(),
+			deletedCommunity.getCommunityCreatedAt(),
+			deletedCommunity.getCommunityUpdatedAt(),
+			deletedCommunity.getCommunityDeletedAt(),
+			deletedCommunity.getCommunityStatus(),
+			deletedCommunity.getCommunityUserId(),
+			deletedCommunity.getCommunityImg()
+		);
 	}
+
 }
 

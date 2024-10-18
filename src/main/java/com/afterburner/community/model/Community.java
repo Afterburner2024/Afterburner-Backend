@@ -14,7 +14,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jdk.jfr.Timestamp;
 
 @Entity
 @Table(name = "community")
@@ -31,7 +30,7 @@ public class Community {
 	@Column(name = "community_content", columnDefinition = "VARCHAR(3000)", nullable = false)
 	private String communityContent;
 
-	@Column(name = "community_created_at")
+	@Column(name = "community_created_at", nullable = false)
 	@CreationTimestamp
 	private LocalDateTime communityCreatedAt;
 

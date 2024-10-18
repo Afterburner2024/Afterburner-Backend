@@ -3,15 +3,23 @@ package com.afterburner.community.model;
 import java.time.LocalDateTime;
 
 import com.afterburner.common.enums.PostStatus;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class CommunityDTO {
 
 	private Integer communityId;
 	private String communityTitle;
 	private String communityContent;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDateTime communityCreatedAt;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDateTime communityUpdatedAt;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDateTime communityDeletedAt;
+
 	private PostStatus communityStatus;
 	private Integer communityUserId;
 	private String communityImg;
