@@ -38,4 +38,15 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
+
+    // TeamMemberNotFoundException 처리
+    @ExceptionHandler(TeamMemberNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleTeamMemberNotFoundException(TeamMemberNotFoundException ex) {
+        ErrorResponse response = ErrorResponse.builder()
+            .statusCode(ErrorCode.NOT_FOUND_ERROR.getStatus())
+            .message(ex.getMessage())
+            .build();
+
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
 }
