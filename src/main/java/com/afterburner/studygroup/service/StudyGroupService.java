@@ -106,7 +106,7 @@ public class StudyGroupService {
 			StudyGroupEntity savedEntity = studyGroupRepository.save(entity);
 
 			StudyGroupDTO resultDTO = new StudyGroupDTO();
-			resultDTO.setStudyGroupUserId(savedEntity.getStudyGroupId());
+			resultDTO.setStudyGroupId(savedEntity.getStudyGroupId());
 			resultDTO.setStudyGroupCategory(savedEntity.getStudyGroupCategory());
 			resultDTO.setStudyGroupTitle(savedEntity.getStudyGroupTitle());
 			resultDTO.setStudyGroupContent(savedEntity.getStudyGroupContent());

@@ -1,45 +1,36 @@
-package com.afterburner.studygroup.controller;
+package com.afterburner.question.controller;
+
+import com.afterburner.common.codes.ErrorCode;
+import com.afterburner.common.codes.SuccessCode;
+import com.afterburner.question.model.dto.QuestionDTO;
+import com.afterburner.question.service.QuestionService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.afterburner.common.codes.ErrorCode;
-import com.afterburner.common.codes.SuccessCode;
-import com.afterburner.studygroup.model.dto.StudyGroupDTO;
-import com.afterburner.studygroup.service.StudyGroupService;
-
-import jakarta.validation.Valid;
-
 @RestController
-@RequestMapping("/api/v1/study-group")
-public class StudyGroupController {
+@RequestMapping("/api/v1/question")
+public class QuestionController {
 
-	private final StudyGroupService studyGroupService;
+	private final QuestionService questionService;
 
 	@Autowired
-	public StudyGroupController(StudyGroupService studyGroupService) {
-		this.studyGroupService = studyGroupService;
+	public QuestionController(QuestionService questionService) {
+		this.questionService = questionService;
 	}
 
 	@PostMapping
-	public ResponseEntity<?> createStudyGroup(@Valid @RequestBody StudyGroupDTO studyGroupDTO) {
-		if (studyGroupDTO == null){
+	public ResponseEntity<?> createQuestion(@Valid @RequestBody QuestionDTO questionDTO) {
+		if (questionDTO == null){
 			return ResponseEntity.status(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus()).body(ErrorCode.REQUEST_BODY_MISSING_ERROR.getMessage());
 		}
 
-		StudyGroupDTO createdDTO = studyGroupService.createPost(studyGroupDTO);
+		QuestionDTO createdDTO = questionService.createPost(questionDTO);
 
 		if (createdDTO != null) {
 			return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(createdDTO);
@@ -49,16 +40,16 @@ public class StudyGroupController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateStudyGroup(@Valid @RequestBody StudyGroupDTO studyGroupDTO, @PathVariable("id") Integer id) {
+	public ResponseEntity<?> updateQuestion(@Valid @RequestBody QuestionDTO questionDTO, @PathVariable("id") Integer id) {
 		if (id == null || id <= 0) {
 			return ResponseEntity.status(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getStatus()).body(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getMessage());
 		}
 
-		if (studyGroupDTO == null) {
+		if (questionDTO == null) {
 			return ResponseEntity.status(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus()).body(ErrorCode.REQUEST_BODY_MISSING_ERROR.getMessage());
 		}
 
-		StudyGroupDTO updatedDTO = studyGroupService.updatePost(studyGroupDTO, id);
+		QuestionDTO updatedDTO = questionService.updatePost(questionDTO, id);
 
 		if (updatedDTO != null) {
 			return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(updatedDTO);
@@ -68,13 +59,12 @@ public class StudyGroupController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteStudyGroup(@PathVariable("id") Integer id) {
+	public ResponseEntity<?> deleteQuestion(@PathVariable("id") Integer id) {
 		if (id == null || id <= 0) {
 			return ResponseEntity.status(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getStatus()).body(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getMessage());
 		}
 
-
-		StudyGroupDTO deletedDTO = studyGroupService.deletePost(id);
+		QuestionDTO deletedDTO = questionService.deletePost(id);
 
 		if (deletedDTO != null) {
 			return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(deletedDTO);
@@ -84,8 +74,8 @@ public class StudyGroupController {
 	}
 
 	@GetMapping
-	public List<StudyGroupDTO> getAllStudyGroups() {
-		return studyGroupService.allStudyGroupList();
+	public List<QuestionDTO> getAllQuestions() {
+		return questionService.allStudyGroupList();
 	}
 
 	@GetMapping("/{id}")
@@ -96,7 +86,7 @@ public class StudyGroupController {
 			return ResponseEntity.status(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getStatus()).body(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getMessage());
 		}
 
-		StudyGroupDTO findDTO = studyGroupService.detailPost(id);
+		QuestionDTO findDTO = questionService.detailPost(id);
 
 		if (findDTO != null) {
 			return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(findDTO);
