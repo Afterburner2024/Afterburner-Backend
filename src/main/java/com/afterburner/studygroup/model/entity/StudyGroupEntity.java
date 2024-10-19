@@ -3,7 +3,6 @@ package com.afterburner.studygroup.model.entity;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import com.afterburner.common.enums.PostStatus;
 
@@ -61,19 +60,19 @@ public class StudyGroupEntity {
 		this.studyGroupUserId = builder.studyGroupUserId;
 	}
 
-	public static class Builder{
+	public static class Builder {
 		private StudyGroupCategory studyGroupCategory;
 		private String studyGroupTitle;
 		private String studyGroupContent;
 		private PostStatus studyGroupStatus;
 		private Integer studyGroupUserId;
 
-		public Builder studyGroupCategory(StudyGroupCategory studyGroupCategory){
+		public Builder studyGroupCategory(StudyGroupCategory studyGroupCategory) {
 			this.studyGroupCategory = studyGroupCategory;
 			return this;
 		}
 
-		public Builder studyGroupTitle(String studyGroupTitle){
+		public Builder studyGroupTitle(String studyGroupTitle) {
 			if (studyGroupTitle.length() > 30) {
 				throw new IllegalArgumentException("제목은 30자 미만만 가능합니다.");
 			} else {
@@ -82,7 +81,7 @@ public class StudyGroupEntity {
 			return this;
 		}
 
-		public Builder studyGroupContent(String studyGroupContent){
+		public Builder studyGroupContent(String studyGroupContent) {
 			if (studyGroupContent.length() > 5000) {
 				throw new IllegalArgumentException("내용은 5000자 미만만 가능합니다.");
 			} else {
@@ -91,17 +90,17 @@ public class StudyGroupEntity {
 			return this;
 		}
 
-		public Builder studyGroupStatus(PostStatus studyGroupStatus){
+		public Builder studyGroupStatus(PostStatus studyGroupStatus) {
 			this.studyGroupStatus = studyGroupStatus;
 			return this;
 		}
 
-		public Builder studyGroupUserId(Integer studyGroupUserId){
+		public Builder studyGroupUserId(Integer studyGroupUserId) {
 			this.studyGroupUserId = studyGroupUserId;
 			return this;
 		}
 
-		public StudyGroupEntity build(){
+		public StudyGroupEntity build() {
 			if (studyGroupCategory == null || studyGroupTitle == null || studyGroupContent == null) {
 				throw new IllegalArgumentException("모든 필드를 채워주세요.");
 			}
