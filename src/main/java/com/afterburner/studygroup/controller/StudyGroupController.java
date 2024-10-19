@@ -35,8 +35,9 @@ public class StudyGroupController {
 
 	@PostMapping
 	public ResponseEntity<?> createStudyGroup(@Valid @RequestBody StudyGroupDTO studyGroupDTO) {
-		if (studyGroupDTO == null){
-			return ResponseEntity.status(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus()).body(ErrorCode.REQUEST_BODY_MISSING_ERROR.getMessage());
+		if (studyGroupDTO == null) {
+			return ResponseEntity.status(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus())
+				.body(ErrorCode.REQUEST_BODY_MISSING_ERROR.getMessage());
 		}
 
 		StudyGroupDTO createdDTO = studyGroupService.createPost(studyGroupDTO);
@@ -44,18 +45,22 @@ public class StudyGroupController {
 		if (createdDTO != null) {
 			return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(createdDTO);
 		} else {
-			return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus()).body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
+			return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus())
+				.body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
 		}
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateStudyGroup(@Valid @RequestBody StudyGroupDTO studyGroupDTO, @PathVariable("id") Integer id) {
+	public ResponseEntity<?> updateStudyGroup(@Valid @RequestBody StudyGroupDTO studyGroupDTO,
+		@PathVariable("id") Integer id) {
 		if (id == null || id <= 0) {
-			return ResponseEntity.status(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getStatus()).body(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getMessage());
+			return ResponseEntity.status(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getStatus())
+				.body(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getMessage());
 		}
 
 		if (studyGroupDTO == null) {
-			return ResponseEntity.status(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus()).body(ErrorCode.REQUEST_BODY_MISSING_ERROR.getMessage());
+			return ResponseEntity.status(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus())
+				.body(ErrorCode.REQUEST_BODY_MISSING_ERROR.getMessage());
 		}
 
 		StudyGroupDTO updatedDTO = studyGroupService.updatePost(studyGroupDTO, id);
@@ -63,23 +68,25 @@ public class StudyGroupController {
 		if (updatedDTO != null) {
 			return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(updatedDTO);
 		} else {
-			return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus()).body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
+			return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus())
+				.body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
 		}
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteStudyGroup(@PathVariable("id") Integer id) {
 		if (id == null || id <= 0) {
-			return ResponseEntity.status(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getStatus()).body(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getMessage());
+			return ResponseEntity.status(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getStatus())
+				.body(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getMessage());
 		}
-
 
 		StudyGroupDTO deletedDTO = studyGroupService.deletePost(id);
 
 		if (deletedDTO != null) {
 			return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(deletedDTO);
 		} else {
-			return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus()).body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
+			return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus())
+				.body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
 		}
 	}
 
@@ -92,8 +99,9 @@ public class StudyGroupController {
 	public ResponseEntity<?> detail(@PathVariable("id") Integer id) {
 		Map<String, Object> response = new HashMap<>();
 
-		if(id <= 0 || id == null) {
-			return ResponseEntity.status(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getStatus()).body(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getMessage());
+		if (id <= 0 || id == null) {
+			return ResponseEntity.status(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getStatus())
+				.body(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getMessage());
 		}
 
 		StudyGroupDTO findDTO = studyGroupService.detailPost(id);
@@ -101,7 +109,8 @@ public class StudyGroupController {
 		if (findDTO != null) {
 			return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(findDTO);
 		} else {
-			return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus()).body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
+			return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus())
+				.body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
 		}
 	}
 
