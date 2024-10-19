@@ -12,6 +12,8 @@ import com.afterburner.common.enums.TeamMemberRole;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,9 +37,11 @@ public class ProjectTeam {
 	private Integer projectTeamUserId;
 
 	@Column(name = "project_team_role", nullable = false)
+	@Enumerated(EnumType.STRING)
 	private TeamMemberRole projectTeamRole;
 
 	@Column(name = "project_team_part")
+	@Enumerated(EnumType.STRING)
 	private ProjectTeamPart projectTeamPart;
 
 	@Column(name = "project_team_joined_at", nullable = false)
@@ -46,7 +50,7 @@ public class ProjectTeam {
 
 	@Column(name = "project_team_quited_at")
 	private LocalDateTime projectTeamQuitedAt;
-	// 기본 생성자
+
 	public ProjectTeam() {
 	}
 
