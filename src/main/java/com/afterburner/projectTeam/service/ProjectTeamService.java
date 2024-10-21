@@ -1,6 +1,7 @@
 package com.afterburner.projectTeam.service;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,14 +83,17 @@ public class ProjectTeamService {
 		return new ProjectTeamDTO(teamMember);
 	}
 
-	// 팀원 전체 조회 (상태 필터링 추가, 거부된 애들은 안보임)
+	// 팀원 전체 조회 (APPROVED 및 PENDING 상태 모두 포함)
 	public List<ProjectTeamDTO> getAllTeamMembers(Integer projectId) {
 		// 프로젝트가 존재하는지 확인
 		projectRepository.findById(projectId)
 			.orElseThrow(() -> new ProjectNotFoundException("ID: " + projectId + "의 프로젝트를 찾을 수 없습니다."));
 
-		// 상태가 PENDING 또는 APPROVED인 팀원만 조회
-		List<ProjectTeam> teamMembers = projectTeamRepository.findByProjectTeamPostIdAndProjectTeamStatus(projectId, "APPROVED");
+		// 상태가 APPROVED 또는 PENDING인 팀원 모두 조회
+		List<String> statuses = Arrays.asList("APPROVED", "PENDING");
+		List<ProjectTeam> teamMembers = projectTeamRepository.findByProjectTeamPostIdAndProjectTeamStatusIn(projectId, statuses);
+
+		// DTO 변환
 		List<ProjectTeamDTO> teamMemberDTOs = teamMembers.stream()
 			.map(teamMember -> {
 				ProjectTeamDTO dto = new ProjectTeamDTO();
@@ -97,6 +101,7 @@ public class ProjectTeamService {
 				dto.setProjectTeamRole(teamMember.getProjectTeamRole());
 				dto.setProjectTeamPart(teamMember.getProjectTeamPart());
 				dto.setProjectTeamJoinedAt(teamMember.getProjectTeamJoinedAt());
+				dto.setProjectTeamMember(teamMember.getProjectTeamMember());
 				return dto;
 			})
 			.collect(Collectors.toList());
