@@ -44,6 +44,10 @@ public class ProjectTeam {
 	@Enumerated(EnumType.STRING)
 	private ProjectTeamPart projectTeamPart;
 
+	@Column(name = "project_team_member")
+	@Enumerated(EnumType.STRING)
+	private ProjectTeamMember projectTeamMember = ProjectTeamMember.PENDING; // 기본값 PENDING (신청 대기상태)
+
 	@Column(name = "project_team_joined_at", nullable = false)
 	@CreationTimestamp
 	private LocalDateTime projectTeamJoinedAt;
@@ -55,13 +59,14 @@ public class ProjectTeam {
 	}
 
 	public ProjectTeam(Integer projectTeamId, Integer projectTeamPostId, Integer projectTeamUserId,
-		TeamMemberRole projectTeamRole, ProjectTeamPart projectTeamPart, LocalDateTime projectTeamJoinedAt,
-		LocalDateTime projectTeamQuitedAt) {
+		TeamMemberRole projectTeamRole, ProjectTeamPart projectTeamPart, ProjectTeamMember projectTeamMember,
+		LocalDateTime projectTeamJoinedAt, LocalDateTime projectTeamQuitedAt) {
 		this.projectTeamId = projectTeamId;
 		this.projectTeamPostId = projectTeamPostId;
 		this.projectTeamUserId = projectTeamUserId;
 		this.projectTeamRole = projectTeamRole;
 		this.projectTeamPart = projectTeamPart;
+		this.projectTeamMember = projectTeamMember;
 		this.projectTeamJoinedAt = projectTeamJoinedAt;
 		this.projectTeamQuitedAt = projectTeamQuitedAt;
 	}
@@ -106,6 +111,14 @@ public class ProjectTeam {
 		this.projectTeamPart = projectTeamPart;
 	}
 
+	public ProjectTeamMember getProjectTeamMember() {
+		return projectTeamMember;
+	}
+
+	public void setProjectTeamMember(ProjectTeamMember projectTeamMember) {
+		this.projectTeamMember = projectTeamMember;
+	}
+
 	public LocalDateTime getProjectTeamJoinedAt() {
 		return projectTeamJoinedAt;
 	}
@@ -130,6 +143,7 @@ public class ProjectTeam {
 			", projectTeamUserId=" + projectTeamUserId +
 			", projectTeamRole=" + projectTeamRole +
 			", projectTeamPart=" + projectTeamPart +
+			", projectTeamMember=" + projectTeamMember +
 			", projectTeamJoinedAt=" + projectTeamJoinedAt +
 			", projectTeamQuitedAt=" + projectTeamQuitedAt +
 			'}';
