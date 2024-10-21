@@ -18,7 +18,8 @@ public class CommunityDTO {
 	private String communityTitle;
 
 	@NotEmpty(message = "게시글 내용은 필수입니다.")
-	@Size(max = 3000, message = "게시글 내용은 3000자 이내여야 합니다.")private String communityContent;
+	@Size(max = 3000, message = "게시글 내용은 3000자 이내여야 합니다.")
+	private String communityContent;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDateTime communityCreatedAt;
