@@ -60,7 +60,7 @@ public class ProjectTeamService {
 	// 팀장이 승인
 	@Transactional
 	public ProjectTeamDTO approveTeamMember(Integer projectId, Integer projectTeamId) {
-		ProjectTeam teamMember = projectTeamRepository.findByProjectIdAndMemberId(projectId, projectTeamId)
+		ProjectTeam teamMember = projectTeamRepository.findByProjectTeamIdAndProjectTeamUserId(projectId, projectTeamId)
 			.orElseThrow(() -> new EntityNotFoundException("팀원을 찾을 수 없습니다."));
 
 		// 신청 상태를 APPROVED로 변경
@@ -73,7 +73,7 @@ public class ProjectTeamService {
 	// 팀원 거부  잔인하다
 	@Transactional
 	public ProjectTeamDTO rejectTeamMember(Integer projectId, Integer projectTeamId) {
-		ProjectTeam teamMember = projectTeamRepository.findByProjectIdAndMemberId(projectId, projectTeamId)
+		ProjectTeam teamMember = projectTeamRepository.findByProjectTeamIdAndProjectTeamUserId(projectId, projectTeamId)
 			.orElseThrow(() -> new EntityNotFoundException("팀원을 찾을 수 없습니다."));
 
 		// 신청 상태를 REJECTED로 변경
@@ -91,7 +91,7 @@ public class ProjectTeamService {
 
 		// 상태가 APPROVED 또는 PENDING인 팀원 모두 조회
 		List<String> statuses = Arrays.asList("APPROVED", "PENDING");
-		List<ProjectTeam> teamMembers = projectTeamRepository.findByProjectTeamPostIdAndProjectTeamStatusIn(projectId, statuses);
+		List<ProjectTeam> teamMembers = projectTeamRepository.findByProjectTeamPostIdAndProjectTeamMemberIn(projectId, statuses);
 
 		// DTO 변환
 		List<ProjectTeamDTO> teamMemberDTOs = teamMembers.stream()
