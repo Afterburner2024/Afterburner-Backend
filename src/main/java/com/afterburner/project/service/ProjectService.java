@@ -2,6 +2,7 @@ package com.afterburner.project.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public class ProjectService {
 		this.projectRepository = projectRepository;
 	}
 
-	// 필수 값 검증해서 로그에 남길려고 만든거임... 필요 없어지거나 리소스 많이 먹으면 삭제하던지 해야 할 듯?
+	// 필수 값 검증
 	private void validateProjectDTO(ProjectDTO projectDTO) {
 		if (projectDTO.getProjectTitle() == null || projectDTO.getProjectContent() == null) {
 			logger.warn("제목 또는 내용이 없습니다. 제목: {}, 내용: {}", projectDTO.getProjectTitle(), projectDTO.getProjectContent());
@@ -46,15 +47,16 @@ public class ProjectService {
 			.projectTitle(projectDTO.getProjectTitle())
 			.projectContent(projectDTO.getProjectContent())
 			.projectLink(projectDTO.getProjectLink())
-			.projectStatus(PostStatus.DEFAULT)
+			.projectStatus(PostStatus.DEFAULT)  // 기본값으로 DEFAULT 설정
 			.projectUserId(projectDTO.getProjectUserId())
 			.build();
 
 		project.setProjectTechStack(projectDTO.getProjectTechStack());
+		project.setTeamPartLimits(projectDTO.getTeamPartLimits());
 		projectRepository.save(project);
 		logger.info("프로젝트가 성공적으로 등록되었습니다. ID: {}", project.getProjectId());
 
-		// DTO 생성 및 반환
+		// DTO 변환
 		return new ProjectDTO(
 			project.getProjectId(),
 			project.getProjectTitle(),
@@ -66,14 +68,15 @@ public class ProjectService {
 			project.getProjectFinishedAt(),
 			project.getProjectStatus(),
 			project.getProjectTechStack(),
+			project.getTeamPartLimits(),
 			project.getProjectUserId()
 		);
 	}
 
-	// 전체 조회
-	public List<ProjectDTO> getAllProjects() {
-		logger.info("모든 프로젝트를 조회 중입니다.");
-		return projectRepository.findAll().stream()
+	// 전체 게시글 조회
+	public List<ProjectDTO> getAllProjects() { // DELETED가 아닌 애들만 조회
+		List<Project> projects = projectRepository.findAllByProjectStatusNot(PostStatus.DELETED);
+		return projects.stream()
 			.map(project -> new ProjectDTO(
 				project.getProjectId(),
 				project.getProjectTitle(),
@@ -85,18 +88,18 @@ public class ProjectService {
 				project.getProjectFinishedAt(),
 				project.getProjectStatus(),
 				project.getProjectTechStack(),
+				project.getTeamPartLimits(),
 				project.getProjectUserId()
 			))
 			.collect(Collectors.toList());
 	}
 
-	// ID 기준 상세 조회
-	public ProjectDTO getProjectById(Integer projectId) throws Exception {
-		logger.info("ID: {}의 프로젝트를 조회 중입니다.", projectId);
-		Project project = projectRepository.findById(projectId)
-			.orElseThrow(() -> new ProjectNotFoundException("사이드 프로젝트 게시글을 찾을 수 없습니다. ID: " + projectId));
+	// ID 기준 게시글 조회
+	public ProjectDTO getProjectById(Integer projectId) { // DELETED가 아닌 애들만 조회
+		Project project = projectRepository.findByIdAndProjectStatusNot(projectId, PostStatus.DELETED)
+			.orElseThrow(() -> new NoSuchElementException("해당 ID의 프로젝트가 존재하지 않습니다."));
 
-		logger.info("ID: {}의 프로젝트를 성공적으로 조회하였습니다.", projectId);
+		// DTO 변환
 		return new ProjectDTO(
 			project.getProjectId(),
 			project.getProjectTitle(),
@@ -108,29 +111,27 @@ public class ProjectService {
 			project.getProjectFinishedAt(),
 			project.getProjectStatus(),
 			project.getProjectTechStack(),
+			project.getTeamPartLimits(),
 			project.getProjectUserId()
 		);
 	}
 
 	// 게시글 수정
 	@Transactional
-	public ProjectDTO updateProject(Integer projectId, ProjectDTO projectDTO) throws Exception {
-		logger.info("ID: {}의 프로젝트를 수정 중입니다.", projectId);
+	public ProjectDTO updateProject(Integer projectId, ProjectDTO projectDTO) { // DELETED가 아닌 애들만 수정 가능
 		validateProjectDTO(projectDTO);
-
-		Project project = projectRepository.findById(projectId)
-			.orElseThrow(() -> new ProjectNotFoundException("사이드 프로젝트 게시글을 찾을 수 없습니다. ID: " + projectId));
+		Project project = projectRepository.findByIdAndProjectStatusNot(projectId, PostStatus.DELETED)
+			.orElseThrow(() -> new NoSuchElementException("해당 ID의 프로젝트가 존재하지 않습니다."));
 
 		project.setProjectTitle(projectDTO.getProjectTitle());
 		project.setProjectContent(projectDTO.getProjectContent());
 		project.setProjectLink(projectDTO.getProjectLink());
 		project.setProjectTechStack(projectDTO.getProjectTechStack());
-		project.setProjectStatus(projectDTO.getProjectStatus());
-		project.setProjectUserId(projectDTO.getProjectUserId());
+		project.setTeamPartLimits(projectDTO.getTeamPartLimits());
 
-		projectRepository.save(project);
-		logger.info("ID: {}의 프로젝트가 성공적으로 수정되었습니다.", projectId);
+		logger.info("프로젝트가 수정되었습니다. ID: {}", projectId);
 
+		// DTO 변환
 		return new ProjectDTO(
 			project.getProjectId(),
 			project.getProjectTitle(),
@@ -142,6 +143,7 @@ public class ProjectService {
 			project.getProjectFinishedAt(),
 			project.getProjectStatus(),
 			project.getProjectTechStack(),
+			project.getTeamPartLimits(),
 			project.getProjectUserId()
 		);
 	}
@@ -159,4 +161,3 @@ public class ProjectService {
 		logger.info("ID: {}의 프로젝트가 성공적으로 삭제되었습니다.", projectId);
 	}
 }
-
