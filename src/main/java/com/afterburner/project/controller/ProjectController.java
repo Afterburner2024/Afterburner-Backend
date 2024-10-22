@@ -59,10 +59,10 @@ public class ProjectController {
 				.message(SuccessCode.INSERT.getMessage())
 				.result(createdProject)
 				.build();
-			return ResponseEntity.status(HttpStatus.CREATED).body(response); // 등록 성공!
+			return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		} else {
 			logger.error("프로젝트 생성에 실패했습니다.");
-			return ResponseEntity.status(ErrorCode.INSERT_ERROR.getStatus()) // 등록 실패 ㅠㅠ
+			return ResponseEntity.status(ErrorCode.INSERT_ERROR.getStatus())
 				.body(new ApiResponse.Builder<ProjectDTO>()
 					.statusCode(ErrorCode.INSERT_ERROR.getStatus())
 					.message(ErrorCode.INSERT_ERROR.getMessage())
@@ -143,10 +143,6 @@ public class ProjectController {
 		}
 		projectService.deleteProject(projectId);
 		logger.info("ID: {}의 프로젝트가 성공적으로 삭제되었습니다.", projectId);
-		ApiResponse<Void> response = new ApiResponse.Builder<Void>()
-			.statusCode(SuccessCode.DELETE.getStatus())
-			.message(SuccessCode.DELETE.getMessage())
-			.build();
-		return ResponseEntity.ok(response);
+		return ResponseEntity.noContent().build();
 	}
 }

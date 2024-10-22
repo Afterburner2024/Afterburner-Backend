@@ -1,14 +1,18 @@
 package com.afterburner.project.model;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import com.afterburner.common.enums.PostStatus;
+import com.afterburner.projectTeam.model.ProjectTeamPart;
+
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 
 import jakarta.persistence.Column;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -55,11 +59,15 @@ public class Project {
 	@Type(JsonBinaryType.class)
 	private List<String> projectTechStack;
 
+	@Type(JsonBinaryType.class)
+	@Column(name = "project_team_part_limits", columnDefinition = "jsonb")
+	private Map<ProjectTeamPart, Integer> teamPartLimits;
+
 	@Column(name = "project_user_id", nullable = false)
 	private Integer projectUserId;
 
-	// 기본 생성자
 	public Project() {
+		this.teamPartLimits = new HashMap<>();
 	}
 
 	// 빌더 패턴 생성자
@@ -70,9 +78,9 @@ public class Project {
 		this.projectStatus = builder.projectStatus;
 		this.projectUserId = builder.projectUserId;
 		this.projectTechStack = builder.projectTechStack;
+		this.teamPartLimits = builder.teamPartLimits;
 	}
 
-	// 빌더 클래스
 	public static class Builder {
 		private String projectTitle;
 		private String projectContent;
@@ -80,6 +88,7 @@ public class Project {
 		private PostStatus projectStatus;
 		private List<String> projectTechStack;
 		private Integer projectUserId;
+		private Map<ProjectTeamPart, Integer> teamPartLimits = new HashMap<>();
 
 		public Builder projectTitle(String projectTitle) {
 			if (projectTitle.length() > 30) {
@@ -114,6 +123,11 @@ public class Project {
 
 		public Builder projectUserId(Integer projectUserId) {
 			this.projectUserId = projectUserId;
+			return this;
+		}
+
+		public Builder teamPartLimits(Map<ProjectTeamPart, Integer> teamPartLimits) {
+			this.teamPartLimits = teamPartLimits;
 			return this;
 		}
 
@@ -215,6 +229,14 @@ public class Project {
 		this.projectTechStack = projectTechStack;
 	}
 
+	public Map<ProjectTeamPart, Integer> getTeamPartLimits() {
+		return teamPartLimits;
+	}
+
+	public void setTeamPartLimits(Map<ProjectTeamPart, Integer> teamPartLimits) {
+		this.teamPartLimits = teamPartLimits;
+	}
+
 	public Integer getProjectUserId() {
 		return projectUserId;
 	}
@@ -236,6 +258,7 @@ public class Project {
 			", projectFinishedAt=" + projectFinishedAt +
 			", projectStatus=" + projectStatus +
 			", projectTechStack='" + projectTechStack + '\'' +
+			", teamPartLimits='" + teamPartLimits + '\'' +
 			", projectUserId=" + projectUserId +
 			'}';
 	}

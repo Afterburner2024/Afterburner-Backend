@@ -2,9 +2,10 @@ package com.afterburner.project.model;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import com.afterburner.common.enums.PostStatus;
-
+import com.afterburner.projectTeam.model.ProjectTeamPart;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -43,6 +44,9 @@ public class ProjectDTO {
 	@NotNull(message = "프로젝트 기술 스택은 필수입니다.")
 	private List<String> projectTechStack;
 
+	@NotNull(message = "팀 파트 제한 인원은 필수입니다.")
+	private Map<ProjectTeamPart, Integer> teamPartLimits;
+
 	@NotNull(message = "사용자 ID는 필수입니다.")
 	private Integer projectUserId;
 
@@ -51,7 +55,8 @@ public class ProjectDTO {
 
 	public ProjectDTO(Integer projectId, String projectTitle, String projectContent, String projectLink,
 		LocalDateTime projectCreatedAt, LocalDateTime projectUpdatedAt, LocalDateTime projectDeletedAt,
-		LocalDateTime projectFinishedAt, PostStatus projectStatus, List<String> projectTechStack, Integer projectUserId) {
+		LocalDateTime projectFinishedAt, PostStatus projectStatus, List<String> projectTechStack,
+		Map<ProjectTeamPart, Integer> teamPartLimits, Integer projectUserId) {
 		this.projectId = projectId;
 		this.projectTitle = projectTitle;
 		this.projectContent = projectContent;
@@ -62,6 +67,7 @@ public class ProjectDTO {
 		this.projectFinishedAt = projectFinishedAt;
 		this.projectStatus = projectStatus;
 		this.projectTechStack = projectTechStack;
+		this.teamPartLimits = teamPartLimits;
 		this.projectUserId = projectUserId;
 	}
 
@@ -97,11 +103,9 @@ public class ProjectDTO {
 		this.projectLink = projectLink;
 	}
 
-
 	public LocalDateTime getProjectCreatedAt() {
 		return projectCreatedAt;
 	}
-
 
 	public LocalDateTime getProjectUpdatedAt() {
 		return projectUpdatedAt;
@@ -110,7 +114,6 @@ public class ProjectDTO {
 	public void setProjectUpdatedAt(LocalDateTime projectUpdatedAt) {
 		this.projectUpdatedAt = projectUpdatedAt;
 	}
-
 
 	public LocalDateTime getProjectDeletedAt() {
 		return projectDeletedAt;
@@ -144,6 +147,14 @@ public class ProjectDTO {
 		this.projectTechStack = projectTechStack;
 	}
 
+	public Map<ProjectTeamPart, Integer> getTeamPartLimits() {
+		return teamPartLimits;
+	}
+
+	public void setTeamPartLimits(Map<ProjectTeamPart, Integer> teamPartLimits) {
+		this.teamPartLimits = teamPartLimits;
+	}
+
 	public Integer getProjectUserId() {
 		return projectUserId;
 	}
@@ -164,7 +175,8 @@ public class ProjectDTO {
 			", projectDeletedAt=" + projectDeletedAt +
 			", projectFinishedAt=" + projectFinishedAt +
 			", projectStatus=" + projectStatus +
-			", projectTechStack='" + projectTechStack + '\'' +
+			", projectTechStack=" + projectTechStack +
+			", teamPartLimits=" + teamPartLimits +
 			", projectUserId=" + projectUserId +
 			'}';
 	}
