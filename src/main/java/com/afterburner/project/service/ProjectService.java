@@ -96,7 +96,7 @@ public class ProjectService {
 
 	// ID 기준 게시글 조회
 	public ProjectDTO getProjectById(Integer projectId) { // DELETED가 아닌 애들만 조회
-		Project project = projectRepository.findByIdAndProjectStatusNot(projectId, PostStatus.DELETED)
+		Project project = projectRepository.findByProjectIdAndProjectStatusNot(projectId, PostStatus.DELETED)
 			.orElseThrow(() -> new NoSuchElementException("해당 ID의 프로젝트가 존재하지 않습니다."));
 
 		// DTO 변환
@@ -120,7 +120,7 @@ public class ProjectService {
 	@Transactional
 	public ProjectDTO updateProject(Integer projectId, ProjectDTO projectDTO) { // DELETED가 아닌 애들만 수정 가능
 		validateProjectDTO(projectDTO);
-		Project project = projectRepository.findByIdAndProjectStatusNot(projectId, PostStatus.DELETED)
+		Project project = projectRepository.findByProjectIdAndProjectStatusNot(projectId, PostStatus.DELETED)
 			.orElseThrow(() -> new NoSuchElementException("해당 ID의 프로젝트가 존재하지 않습니다."));
 
 		project.setProjectTitle(projectDTO.getProjectTitle());

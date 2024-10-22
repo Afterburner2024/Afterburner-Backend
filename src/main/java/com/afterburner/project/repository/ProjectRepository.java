@@ -10,7 +10,8 @@ import com.afterburner.project.model.Project;
 
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
-	Optional<Project> findByIdAndProjectStatusNot(Integer projectId, PostStatus postStatus);
-
 	List<Project> findAllByProjectStatusNot(PostStatus postStatus);
+
+	Optional<Project> findByProjectIdAndProjectStatusNot(Integer projectId, PostStatus projectStatus);
+
 }
