@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.afterburner.common.enums.PostStatus;
+import com.afterburner.common.enums.TeamMemberRole;
 import com.afterburner.studygroup.model.dto.StudyGroupDTO;
 import com.afterburner.studygroup.model.entity.StudyGroupEntity;
 import com.afterburner.studygroup.repository.StudyGroupRepository;
+import com.afterburner.studygroup_team.model.dto.StudyGroupTeamDTO;
+import com.afterburner.studygroup_team.service.StudyGroupTeamService;
 
 import jakarta.transaction.Transactional;
 
@@ -19,10 +22,12 @@ import jakarta.transaction.Transactional;
 public class StudyGroupService {
 
 	private final StudyGroupRepository studyGroupRepository;
+	private final StudyGroupTeamService studyGroupTeamService;
 
 	@Autowired
-	public StudyGroupService(StudyGroupRepository studyGroupRepository) {
+	public StudyGroupService(StudyGroupRepository studyGroupRepository, StudyGroupTeamService studyGroupTeamService) {
 		this.studyGroupRepository = studyGroupRepository;
+		this.studyGroupTeamService = studyGroupTeamService;
 	}
 
 	@Transactional
@@ -50,6 +55,13 @@ public class StudyGroupService {
 			savedDTO.setStudyGroupUpdatedAt(savedEntity.getStudyGroupUpdatedAt());
 			savedDTO.setStudyGroupStatus(savedEntity.getStudyGroupStatus());
 			savedDTO.setStudyGroupUserId(savedEntity.getStudyGroupUserId());
+
+			// 작성자를 팀장으로 새로운 team생성
+			StudyGroupTeamDTO teamMemberDTO = new StudyGroupTeamDTO();
+			teamMemberDTO.setStudyGroupTeamPostId(savedDTO.getStudyGroupId());
+			teamMemberDTO.setStudyGroupTeamUserId(savedDTO.getStudyGroupUserId());
+			teamMemberDTO.setStudyGroupTeamRole(TeamMemberRole.LEADER);
+			studyGroupTeamService.addMember(teamMemberDTO);
 
 			return savedDTO;
 		} else {
