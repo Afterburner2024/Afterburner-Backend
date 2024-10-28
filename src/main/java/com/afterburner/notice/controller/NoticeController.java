@@ -53,7 +53,7 @@ public class NoticeController {
 		}
 	}
 
-	// 전체 공지사항 조회
+	// 전체 공지사항 조회 (삭제된 공지사항 제외)
 	@GetMapping
 	public ResponseEntity<?> getAllNotices() {
 		List<NoticeDTO> notices = noticeService.getAllNotices();
@@ -71,7 +71,7 @@ public class NoticeController {
 		}
 	}
 
-	// 특정 공지사항 상세 조회
+	// 특정 공지사항 상세 조회 (삭제된 공지사항 제외)
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getNoticeById(@PathVariable("id") Integer noticeId) {
 		NoticeDTO notice = noticeService.getNoticeById(noticeId);
@@ -89,7 +89,7 @@ public class NoticeController {
 		}
 	}
 
-	// 공지사항 수정
+	// 공지사항 수정 (삭제된 공지사항은 수정 불가)
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateNotice(@PathVariable("id") Integer noticeId, @RequestBody NoticeDTO noticeDTO) {
 		if (noticeDTO == null) {
@@ -115,28 +115,24 @@ public class NoticeController {
 	// 공지사항 삭제
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteNotice(@PathVariable("id") Integer noticeId) {
-		// 요청된 id 값이 null이거나 0 이하인 경우 유효하지 않은 요청 처리
 		if (noticeId == null || noticeId <= 0) {
 			return ResponseEntity.status(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getStatus())
 				.body(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getMessage());
 		}
 
-		// 삭제된 공지사항 객체를 반환받음
 		NoticeDTO deletedNotice = noticeService.deleteNotice(noticeId);
 
-		// 삭제 성공 시
 		if (deletedNotice != null) {
 			ApiResponse<NoticeDTO> response = new ApiResponse.Builder<NoticeDTO>()
 				.statusCode(SuccessCode.DELETE.getStatus())
 				.message(SuccessCode.DELETE.getMessage())
-				.result(deletedNotice)  // 삭제된 공지사항 정보를 응답으로 전달
+				.result(deletedNotice)
 				.build();
 			return ResponseEntity.status(SuccessCode.DELETE.getStatus()).body(response);
 		} else {
-			// 삭제 실패 시
 			return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus())
 				.body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
 		}
 	}
-
 }
+
