@@ -44,11 +44,14 @@ public class Notice {
 	@Column(name = "notice_deleted_at")
 	private LocalDateTime noticeDeletedAt;
 
+	@Column(name = "notice_user_id")
+	private Integer noticeUserId;
+
 	public Notice() {
 	}
 
 	public Notice(Integer noticeId, String noticeTitle, String noticeContent, PostStatus noticeStatus,
-		LocalDateTime noticeCreatedAt, LocalDateTime noticeUpdatedAt, LocalDateTime noticeDeletedAt) {
+		LocalDateTime noticeCreatedAt, LocalDateTime noticeUpdatedAt, LocalDateTime noticeDeletedAt, Integer noticeUserId) {
 		this.noticeId = noticeId;
 		this.noticeTitle = noticeTitle;
 		this.noticeContent = noticeContent;
@@ -56,6 +59,15 @@ public class Notice {
 		this.noticeCreatedAt = noticeCreatedAt;
 		this.noticeUpdatedAt = noticeUpdatedAt;
 		this.noticeDeletedAt = noticeDeletedAt;
+		this.noticeUserId = noticeUserId;
+	}
+
+	public Integer getNoticeUserId() {
+		return noticeUserId;
+	}
+
+	public void setNoticeUserId(Integer noticeUserId) {
+		this.noticeUserId = noticeUserId;
 	}
 
 	public Integer getNoticeId() {
@@ -124,6 +136,7 @@ public class Notice {
 			", noticeCreatedAt=" + noticeCreatedAt +
 			", noticeUpdatedAt=" + noticeUpdatedAt +
 			", noticeDeletedAt=" + noticeDeletedAt +
+			", noticeUserId=" + noticeUserId +
 			'}';
 	}
 }

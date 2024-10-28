@@ -2,6 +2,7 @@ package com.afterburner.notice.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,19 +12,27 @@ import com.afterburner.common.enums.PostStatus;
 import com.afterburner.notice.model.Notice;
 import com.afterburner.notice.model.NoticeDTO;
 import com.afterburner.notice.repository.NoticeRepository;
+import com.afterburner.oauth.model.User;
+import com.afterburner.oauth.repository.UserRepository;
 
 @Service
 public class NoticeService {
 
 	private final NoticeRepository noticeRepository;
+	private final UserRepository userRepository;
 
 	@Autowired
-	public NoticeService(NoticeRepository noticeRepository) {
+	public NoticeService(NoticeRepository noticeRepository, UserRepository userRepository) {
 		this.noticeRepository = noticeRepository;
+		this.userRepository = userRepository;
 	}
 
+	// 유저 정보 등록해야함
 	// 공지사항 등록
 	public NoticeDTO createNotice(NoticeDTO noticeDTO) {
+
+
+
 		Notice notice = new Notice();
 		notice.setNoticeTitle(noticeDTO.getNoticeTitle());
 		notice.setNoticeContent(noticeDTO.getNoticeContent());
@@ -31,6 +40,7 @@ public class NoticeService {
 		notice.setNoticeCreatedAt(LocalDateTime.now());
 		notice.setNoticeUpdatedAt(LocalDateTime.now());
 		notice.setNoticeDeletedAt(null);
+		// notice.setNoticeUserId(user);
 
 		Notice savedNotice = noticeRepository.save(notice);
 
@@ -41,16 +51,17 @@ public class NoticeService {
 			savedNotice.getNoticeStatus(),
 			savedNotice.getNoticeCreatedAt(),
 			savedNotice.getNoticeUpdatedAt(),
-			savedNotice.getNoticeDeletedAt()
+			savedNotice.getNoticeDeletedAt(),
+			savedNotice.getNoticeUserId()
 		);
 	}
 
-	// 전체 공지사항 조회
+	// 전체 공지사항 조회 (삭제되지 않은 것만)
 	public List<NoticeDTO> getAllNotices() {
 		List<Notice> notices = noticeRepository.findAll()
 			.stream()
-			.filter(notice -> notice.getNoticeStatus() == PostStatus.DEFAULT)
-			.collect(Collectors.toList());
+			.filter(notice -> notice.getNoticeStatus() != PostStatus.DELETED) // DELETED가 아닌 것만 필터링
+			.toList();
 
 		return notices.stream()
 			.map(notice -> new NoticeDTO(
@@ -60,17 +71,18 @@ public class NoticeService {
 				notice.getNoticeStatus(),
 				notice.getNoticeCreatedAt(),
 				notice.getNoticeUpdatedAt(),
-				notice.getNoticeDeletedAt()
+				notice.getNoticeDeletedAt(),
+				notice.getNoticeUserId()
 			))
 			.collect(Collectors.toList());
 	}
 
-	// 특정 공지사항 상세 조회
+	// 특정 공지사항 조회 (삭제되지 않은 것만)
 	public NoticeDTO getNoticeById(Integer noticeId) {
 		Notice notice = noticeRepository.findById(noticeId)
 			.orElseThrow(() -> new RuntimeException("공지사항을 찾을 수 없습니다."));
 
-		if (notice.getNoticeStatus() != PostStatus.DEFAULT) {
+		if (notice.getNoticeStatus() == PostStatus.DELETED) {
 			throw new RuntimeException("삭제된 공지사항입니다.");
 		}
 
@@ -81,14 +93,19 @@ public class NoticeService {
 			notice.getNoticeStatus(),
 			notice.getNoticeCreatedAt(),
 			notice.getNoticeUpdatedAt(),
-			notice.getNoticeDeletedAt()
+			notice.getNoticeDeletedAt(),
+			notice.getNoticeUserId()
 		);
 	}
 
-	// 공지사항 수정
+	// 공지사항 수정 (삭제되지 않은 것만)
 	public NoticeDTO updateNotice(Integer noticeId, NoticeDTO noticeDTO) {
 		Notice notice = noticeRepository.findById(noticeId)
 			.orElseThrow(() -> new RuntimeException("공지사항을 찾을 수 없습니다."));
+
+		if (notice.getNoticeStatus() == PostStatus.DELETED) {
+			throw new RuntimeException("삭제된 공지사항은 수정할 수 없습니다.");
+		}
 
 		notice.setNoticeTitle(noticeDTO.getNoticeTitle());
 		notice.setNoticeContent(noticeDTO.getNoticeContent());
@@ -104,7 +121,8 @@ public class NoticeService {
 			updatedNotice.getNoticeStatus(),
 			updatedNotice.getNoticeCreatedAt(),
 			updatedNotice.getNoticeUpdatedAt(),
-			updatedNotice.getNoticeDeletedAt()
+			updatedNotice.getNoticeDeletedAt(),
+			updatedNotice.getNoticeUserId()
 		);
 	}
 
@@ -113,13 +131,11 @@ public class NoticeService {
 		Notice notice = noticeRepository.findById(noticeId)
 			.orElseThrow(() -> new RuntimeException("공지사항을 찾을 수 없습니다."));
 
-		// 공지사항 상태를 삭제된 상태로 변경
 		notice.setNoticeStatus(PostStatus.DELETED);
 		notice.setNoticeDeletedAt(LocalDateTime.now());
 
 		Notice deletedNotice = noticeRepository.save(notice);
 
-		// 삭제된 공지사항 정보를 반환
 		return new NoticeDTO(
 			deletedNotice.getNoticeId(),
 			deletedNotice.getNoticeTitle(),
@@ -127,7 +143,9 @@ public class NoticeService {
 			deletedNotice.getNoticeStatus(),
 			deletedNotice.getNoticeCreatedAt(),
 			deletedNotice.getNoticeUpdatedAt(),
-			deletedNotice.getNoticeDeletedAt()
+			deletedNotice.getNoticeDeletedAt(),
+			deletedNotice.getNoticeUserId()
 		);
 	}
 }
+
