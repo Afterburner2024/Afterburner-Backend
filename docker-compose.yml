@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17.5
+    container_name: afterburner-postgres
+    environment:
+      POSTGRES_DB: afterburner
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yourpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - afterburner-net
+
+  app:
+    build: .
+    container_name: afterburner-backend
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/afterburner
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: yourpassword
+    ports:
+      - "8080:8080"
+    networks:
+      - afterburner-net
+    restart: on-failure
+
+volumes:
+  db-data:
+
+networks:
+  afterburner-net:
+    driver: bridge 

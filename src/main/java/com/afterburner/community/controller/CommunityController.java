@@ -33,7 +33,6 @@ public class CommunityController {
 		this.communityService = communityService;
 	}
 
-	// 이미지 등록 파일질라로 변경해야함.
 	// 게시글 등록
 	@PostMapping
 	public ResponseEntity<?> createCommunityPost(@RequestBody CommunityDTO communityDTO) {
