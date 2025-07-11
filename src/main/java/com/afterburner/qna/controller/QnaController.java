@@ -1,73 +1,129 @@
 package com.afterburner.qna.controller;
 
+import com.afterburner.common.codes.ErrorCode;
 import com.afterburner.common.codes.SuccessCode;
 import com.afterburner.common.response.ApiResponse;
 import com.afterburner.qna.model.dto.QnaDTO;
 import com.afterburner.qna.service.QnaService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/qna")
 public class QnaController {
 
     private final QnaService qnaService;
 
+    @Autowired
+    public QnaController(QnaService qnaService) {
+        this.qnaService = qnaService;
+    }
+
+    // 등록
     @PostMapping
-    public ResponseEntity<ApiResponse<Integer>> createQna(@Valid @RequestBody QnaDTO.Request request) {
-        Integer qnaId = qnaService.createQna(request);
-        ApiResponse<Integer> response = new ApiResponse.Builder<Integer>()
-                .statusCode(SuccessCode.INSERT.getStatus())
-                .message(SuccessCode.INSERT.getMessage())
-                .result(qnaId)
-                .build();
-        return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(response);
+    public ResponseEntity<?> createQna(@RequestBody QnaDTO qnaDTO) {
+        if (qnaDTO == null) {
+            return ResponseEntity.status(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus())
+                    .body(ErrorCode.REQUEST_BODY_MISSING_ERROR.getMessage());
+        }
+
+        QnaDTO createdQna = qnaService.createQna(qnaDTO);
+
+        if (createdQna != null) {
+            ApiResponse<QnaDTO> response = new ApiResponse.Builder<QnaDTO>()
+                    .statusCode(SuccessCode.INSERT.getStatus())
+                    .message(SuccessCode.INSERT.getMessage())
+                    .result(createdQna)
+                    .build();
+            return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(response);
+        } else {
+            return ResponseEntity.status(ErrorCode.INSERT_ERROR.getStatus())
+                    .body(ErrorCode.INSERT_ERROR.getMessage());
+        }
     }
 
-    @GetMapping("/{qnaId}")
-    public ResponseEntity<ApiResponse<QnaDTO.Response>> getQna(@PathVariable Integer qnaId) {
-        QnaDTO.Response qnaResponse = qnaService.getQna(qnaId);
-        ApiResponse<QnaDTO.Response> response = new ApiResponse.Builder<QnaDTO.Response>()
-                .statusCode(SuccessCode.SELECT.getStatus())
-                .message(SuccessCode.SELECT.getMessage())
-                .result(qnaResponse)
-                .build();
-        return ResponseEntity.ok(response);
-    }
-
+    // 전체 조회
     @GetMapping
-    public ResponseEntity<ApiResponse<List<QnaDTO.Response>>> getAllQnas() {
-        List<QnaDTO.Response> qnaList = qnaService.getAllQnas();
-        ApiResponse<List<QnaDTO.Response>> response = new ApiResponse.Builder<List<QnaDTO.Response>>()
-                .statusCode(SuccessCode.SELECT.getStatus())
-                .message(SuccessCode.SELECT.getMessage())
-                .result(qnaList)
-                .build();
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> getAllQnas() {
+        List<QnaDTO> qnas = qnaService.getAllQnas();
+
+        if (qnas != null && !qnas.isEmpty()) {
+            ApiResponse<List<QnaDTO>> response = new ApiResponse.Builder<List<QnaDTO>>()
+                    .statusCode(SuccessCode.SELECT.getStatus())
+                    .message(SuccessCode.SELECT.getMessage())
+                    .result(qnas)
+                    .build();
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
+                    .body(ErrorCode.NOT_FOUND_ERROR.getMessage());
+        }
     }
 
-    @PutMapping("/{qnaId}")
-    public ResponseEntity<ApiResponse<Void>> updateQna(@PathVariable Integer qnaId, @Valid @RequestBody QnaDTO.Request request) {
-        qnaService.updateQna(qnaId, request);
-        ApiResponse<Void> response = new ApiResponse.Builder<Void>()
-                .statusCode(SuccessCode.UPDATE.getStatus())
-                .message(SuccessCode.UPDATE.getMessage())
-                .build();
-        return ResponseEntity.ok(response);
+    // 상세 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getQnaById(@PathVariable("id") Integer qnaId) {
+        QnaDTO qna = qnaService.getQnaById(qnaId);
+
+        if (qna != null) {
+            ApiResponse<QnaDTO> response = new ApiResponse.Builder<QnaDTO>()
+                    .statusCode(SuccessCode.SELECT.getStatus())
+                    .message(SuccessCode.SELECT.getMessage())
+                    .result(qna)
+                    .build();
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
+                    .body(ErrorCode.NOT_FOUND_ERROR.getMessage());
+        }
     }
 
-    @DeleteMapping("/{qnaId}")
-    public ResponseEntity<ApiResponse<Void>> deleteQna(@PathVariable Integer qnaId) {
-        qnaService.deleteQna(qnaId);
-        ApiResponse<Void> response = new ApiResponse.Builder<Void>()
-                .statusCode(SuccessCode.DELETE.getStatus())
-                .message(SuccessCode.DELETE.getMessage())
-                .build();
-        return ResponseEntity.ok(response);
+    // 수정(작성한 유저만 수정가능)
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateQna(@PathVariable("id") Integer qnaId, @RequestBody QnaDTO qnaDTO) {
+        if (qnaDTO == null) {
+            return ResponseEntity.status(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus())
+                    .body(ErrorCode.REQUEST_BODY_MISSING_ERROR.getMessage());
+        }
+
+        QnaDTO updatedQna = qnaService.updateQna(qnaId, qnaDTO);
+
+        if (updatedQna != null) {
+            ApiResponse<QnaDTO> response = new ApiResponse.Builder<QnaDTO>()
+                    .statusCode(SuccessCode.UPDATE.getStatus())
+                    .message(SuccessCode.UPDATE.getMessage())
+                    .result(updatedQna)
+                    .build();
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(ErrorCode.UPDATE_ERROR.getStatus())
+                    .body(ErrorCode.UPDATE_ERROR.getMessage());
+        }
+    }
+
+    // 삭제(논리적 삭제)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteQna(@PathVariable("id") Integer qnaId) {
+        if (qnaId == null || qnaId <= 0) {
+            return ResponseEntity.status(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getStatus())
+                    .body(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getMessage());
+        }
+
+        QnaDTO deletedQna = qnaService.deleteQna(qnaId);
+
+        if (deletedQna != null) {
+            ApiResponse<QnaDTO> response = new ApiResponse.Builder<QnaDTO>()
+                    .statusCode(SuccessCode.DELETE.getStatus())
+                    .message(SuccessCode.DELETE.getMessage())
+                    .result(deletedQna)
+                    .build();
+            return ResponseEntity.status(SuccessCode.DELETE.getStatus()).body(response);
+        } else {
+            return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus())
+                    .body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
+        }
     }
 }

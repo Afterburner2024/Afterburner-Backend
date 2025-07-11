@@ -5,12 +5,14 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "qna")
 public class QnaEntity {
@@ -39,6 +41,9 @@ public class QnaEntity {
 
     @Column(name = "qna_deleted_at")
     private LocalDateTime qnaDeletedAt;
+
+    @Column(name = "qna_image")
+    private String qnaImage;
 
 //        @ManyToOne(fetch = FetchType.LAZY)
 //        @JoinColumn(name = "user_id")
