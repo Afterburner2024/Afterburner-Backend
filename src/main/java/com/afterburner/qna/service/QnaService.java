@@ -36,15 +36,16 @@ public class QnaService {
 
         QnaEntity savedQna = qnaRepository.save(qna);
 
-        return new QnaDTO(
-                savedQna.getQnaId(),
-                savedQna.getQnaTitle(),
-                savedQna.getQnaContent(),
-                savedQna.getQnaStatus(),
-                savedQna.getQnaCreatedAt(),
-                savedQna.getQnaUpdatedAt(),
-                savedQna.getQnaDeletedAt()
-        );
+        return QnaDTO.builder()
+                .qnaId(savedQna.getQnaId())
+                .qnaTitle(savedQna.getQnaTitle())
+                .qnaContent(savedQna.getQnaContent())
+                .qnaAnswer(savedQna.getQnaAnswer())
+                .qnaStatus(savedQna.getQnaStatus())
+                .qnaCreatedAt(savedQna.getQnaCreatedAt())
+                .qnaUpdatedAt(savedQna.getQnaUpdatedAt())
+                .qnaDeletedAt(savedQna.getQnaDeletedAt())
+                .build();
     }
 
     public List<QnaDTO> getAllQnas() {
@@ -54,15 +55,16 @@ public class QnaService {
                 .collect(Collectors.toList());
 
         return qnas.stream()
-                .map(qna -> new QnaDTO(
-                        qna.getQnaId(),
-                        qna.getQnaTitle(),
-                        qna.getQnaContent(),
-                        qna.getQnaStatus(),
-                        qna.getQnaCreatedAt(),
-                        qna.getQnaUpdatedAt(),
-                        qna.getQnaDeletedAt()
-                ))
+                .map(qna -> QnaDTO.builder()
+                        .qnaId(qna.getQnaId())
+                        .qnaTitle(qna.getQnaTitle())
+                        .qnaContent(qna.getQnaContent())
+                        .qnaAnswer(qna.getQnaAnswer())
+                        .qnaStatus(qna.getQnaStatus())
+                        .qnaCreatedAt(qna.getQnaCreatedAt())
+                        .qnaUpdatedAt(qna.getQnaUpdatedAt())
+                        .qnaDeletedAt(qna.getQnaDeletedAt())
+                        .build())
                 .collect(Collectors.toList());
     }
 
@@ -74,15 +76,16 @@ public class QnaService {
             throw new RuntimeException("이미 삭제된 QNA입니다..");
         }
 
-        return new QnaDTO(
-                qna.getQnaId(),
-                qna.getQnaTitle(),
-                qna.getQnaContent(),
-                qna.getQnaStatus(),
-                qna.getQnaCreatedAt(),
-                qna.getQnaUpdatedAt(),
-                qna.getQnaDeletedAt()
-        );
+        return QnaDTO.builder()
+                .qnaId(qna.getQnaId())
+                .qnaTitle(qna.getQnaTitle())
+                .qnaContent(qna.getQnaContent())
+                .qnaAnswer(qna.getQnaAnswer())
+                .qnaStatus(qna.getQnaStatus())
+                .qnaCreatedAt(qna.getQnaCreatedAt())
+                .qnaUpdatedAt(qna.getQnaUpdatedAt())
+                .qnaDeletedAt(qna.getQnaDeletedAt())
+                .build();
     }
 
     @Transactional
@@ -101,15 +104,16 @@ public class QnaService {
 
         QnaEntity updatedQna = qnaRepository.save(qna);
 
-        return new QnaDTO(
-                updatedQna.getQnaId(),
-                updatedQna.getQnaTitle(),
-                updatedQna.getQnaContent(),
-                updatedQna.getQnaStatus(),
-                updatedQna.getQnaCreatedAt(),
-                updatedQna.getQnaUpdatedAt(),
-                updatedQna.getQnaDeletedAt()
-        );
+        return QnaDTO.builder()
+                .qnaId(updatedQna.getQnaId())
+                .qnaTitle(updatedQna.getQnaTitle())
+                .qnaContent(updatedQna.getQnaContent())
+                .qnaAnswer(updatedQna.getQnaAnswer())
+                .qnaStatus(updatedQna.getQnaStatus())
+                .qnaCreatedAt(updatedQna.getQnaCreatedAt())
+                .qnaUpdatedAt(updatedQna.getQnaUpdatedAt())
+                .qnaDeletedAt(updatedQna.getQnaDeletedAt())
+                .build();
     }
 
     @Transactional
@@ -126,14 +130,37 @@ public class QnaService {
 
         QnaEntity deletedQna = qnaRepository.save(qna);
 
-        return new QnaDTO(
-                deletedQna.getQnaId(),
-                deletedQna.getQnaTitle(),
-                deletedQna.getQnaContent(),
-                deletedQna.getQnaStatus(),
-                deletedQna.getQnaCreatedAt(),
-                deletedQna.getQnaUpdatedAt(),
-                deletedQna.getQnaDeletedAt()
-        );
+        return QnaDTO.builder()
+                .qnaId(deletedQna.getQnaId())
+                .qnaTitle(deletedQna.getQnaTitle())
+                .qnaContent(deletedQna.getQnaContent())
+                .qnaAnswer(deletedQna.getQnaAnswer())
+                .qnaStatus(deletedQna.getQnaStatus())
+                .qnaCreatedAt(deletedQna.getQnaCreatedAt())
+                .qnaUpdatedAt(deletedQna.getQnaUpdatedAt())
+                .qnaDeletedAt(deletedQna.getQnaDeletedAt())
+                .build();
+    }
+
+    @Transactional
+    public QnaDTO addAnswer(Integer qnaId, QnaDTO qnaDTO) {
+        QnaEntity qna = qnaRepository.findById(qnaId)
+                .orElseThrow(() -> new RuntimeException("해당 QnA를 찾을 수 없습니다."));
+
+        qna.setQnaAnswer(qnaDTO.getQnaAnswer());
+        qna.setQnaUpdatedAt(LocalDateTime.now());
+
+        QnaEntity answeredQna = qnaRepository.save(qna);
+
+        return QnaDTO.builder()
+                .qnaId(answeredQna.getQnaId())
+                .qnaTitle(answeredQna.getQnaTitle())
+                .qnaContent(answeredQna.getQnaContent())
+                .qnaAnswer(answeredQna.getQnaAnswer())
+                .qnaStatus(answeredQna.getQnaStatus())
+                .qnaCreatedAt(answeredQna.getQnaCreatedAt())
+                .qnaUpdatedAt(answeredQna.getQnaUpdatedAt())
+                .qnaDeletedAt(answeredQna.getQnaDeletedAt())
+                .build();
     }
 }

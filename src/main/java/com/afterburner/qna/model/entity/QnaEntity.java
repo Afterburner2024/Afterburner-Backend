@@ -28,6 +28,9 @@ public class QnaEntity {
     @Column(name = "qna_content", nullable = false, length = 5000)
     private String qnaContent;
 
+    @Column(name = "qna_answer", length = 5000)
+    private String qnaAnswer;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "qna_status", nullable = false)
     private PostStatus qnaStatus;
@@ -42,32 +45,8 @@ public class QnaEntity {
     @Column(name = "qna_deleted_at")
     private LocalDateTime qnaDeletedAt;
 
-    @Column(name = "qna_image")
-    private String qnaImage;
-
 //        @ManyToOne(fetch = FetchType.LAZY)
 //        @JoinColumn(name = "user_id")
 //        private User user;
 
-    @Builder
-    public QnaEntity(Integer qnaId, String qnaTitle, String qnaContent, PostStatus qnaStatus, LocalDateTime qnaCreatedAt, LocalDateTime qnaUpdatedAt, LocalDateTime qnaDeletedAt) {
-        this.qnaId = qnaId;
-        this.qnaTitle = qnaTitle;
-        this.qnaContent = qnaContent;
-        this.qnaStatus = qnaStatus;
-        this.qnaCreatedAt = qnaCreatedAt;
-        this.qnaUpdatedAt = qnaUpdatedAt;
-        this.qnaDeletedAt = qnaDeletedAt;
-    }
-
-    public void update(String qnaTitle, String qnaContent) {
-        this.qnaTitle = qnaTitle;
-        this.qnaContent = qnaContent;
-        this.qnaUpdatedAt = LocalDateTime.now();
-    }
-
-    public void delete() {
-        this.qnaStatus = PostStatus.DELETED;
-        this.qnaDeletedAt = LocalDateTime.now();
-    }
 }

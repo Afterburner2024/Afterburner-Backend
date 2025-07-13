@@ -7,6 +7,7 @@ import com.afterburner.qna.model.dto.QnaDTO;
 import com.afterburner.qna.service.QnaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class QnaController {
 
     // 등록
     @PostMapping
-    public ResponseEntity<?> createQna(@RequestBody QnaDTO qnaDTO) {
+    public ResponseEntity<?> createQna(@Validated @RequestBody QnaDTO qnaDTO) {
         if (qnaDTO == null) {
             return ResponseEntity.status(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus())
                     .body(ErrorCode.REQUEST_BODY_MISSING_ERROR.getMessage());
@@ -83,7 +84,7 @@ public class QnaController {
 
     // 수정(작성한 유저만 수정가능)
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateQna(@PathVariable("id") Integer qnaId, @RequestBody QnaDTO qnaDTO) {
+    public ResponseEntity<?> updateQna(@PathVariable("id") Integer qnaId,@Validated @RequestBody QnaDTO qnaDTO) {
         if (qnaDTO == null) {
             return ResponseEntity.status(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus())
                     .body(ErrorCode.REQUEST_BODY_MISSING_ERROR.getMessage());
@@ -124,6 +125,29 @@ public class QnaController {
         } else {
             return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus())
                     .body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
+        }
+    }
+
+    // 답변 등록
+    @PutMapping("/{id}/answer")
+    public ResponseEntity<?> addAnswer(@PathVariable("id") Integer qnaId, @Validated @RequestBody QnaDTO qnaDTO) {
+        if (qnaDTO == null) {
+            return ResponseEntity.status(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus())
+                    .body(ErrorCode.REQUEST_BODY_MISSING_ERROR.getMessage());
+        }
+
+        QnaDTO answeredQna = qnaService.addAnswer(qnaId, qnaDTO);
+
+        if (answeredQna != null) {
+            ApiResponse<QnaDTO> response = new ApiResponse.Builder<QnaDTO>()
+                    .statusCode(SuccessCode.UPDATE.getStatus())
+                    .message(SuccessCode.UPDATE.getMessage())
+                    .result(answeredQna)
+                    .build();
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(ErrorCode.UPDATE_ERROR.getStatus())
+                    .body(ErrorCode.UPDATE_ERROR.getMessage());
         }
     }
 }
