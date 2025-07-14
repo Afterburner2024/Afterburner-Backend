@@ -68,7 +68,14 @@ public enum ErrorCode {
     CONVERSION_ERROR(400, "JsonB 변환 오류 발생"),
 
     // Transaction Delete Error
-    DELETE_ERROR(200, "Delete Transaction Error Exception"); // End
+    DELETE_ERROR(200, "Delete Transaction Error Exception"),
+
+    // User related errors
+    USER_NOT_FOUND(404, "User not found"),
+    USER_EMAIL_ALREADY_EXISTS(409, "User with this email already exists"),
+
+    // Team related errors
+    TEAM_MEMBER_NOT_FOUND(404, "Team member not found"); // End
 
 
     private int status;

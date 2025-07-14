@@ -1,12 +1,13 @@
 package com.afterburner.global.exception;
 
-public class TechStackConversionException extends RuntimeException {
+import com.afterburner.common.codes.ErrorCode;
 
-	public TechStackConversionException(String message) {
-		super(message);
-	}
+public class TechStackConversionException extends BaseException {
+    public TechStackConversionException(ErrorCode errorCode) {
+        super(errorCode);
+    }
 
-	public TechStackConversionException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public TechStackConversionException(ErrorCode errorCode, String message) {
+        super(errorCode, message);
+    }
 }

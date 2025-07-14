@@ -1,8 +1,13 @@
 package com.afterburner.global.exception;
 
-public class TeamMemberNotFoundException extends RuntimeException {
+import com.afterburner.common.codes.ErrorCode;
 
-	public TeamMemberNotFoundException(String message) {
-		super(message);
-	}
+public class TeamMemberNotFoundException extends BaseException {
+    public TeamMemberNotFoundException(ErrorCode errorCode) {
+        super(errorCode);
+    }
+
+    public TeamMemberNotFoundException(ErrorCode errorCode, String message) {
+        super(errorCode, message);
+    }
 }

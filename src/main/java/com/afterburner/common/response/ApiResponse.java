@@ -1,5 +1,7 @@
 package com.afterburner.common.response;
 
+import com.afterburner.common.codes.SuccessCode;
+
 public class ApiResponse<T> {
     private int statusCode;
     private String message;
@@ -12,6 +14,14 @@ public class ApiResponse<T> {
         this.statusCode = builder.statusCode;
         this.message = builder.message;
         this.result = builder.result;
+    }
+
+    public static <T> ApiResponse<T> success(T result) {
+        return new ApiResponse.Builder<T>()
+                .statusCode(SuccessCode.SELECT.getStatus())
+                .message(SuccessCode.SELECT.getMessage())
+                .result(result)
+                .build();
     }
 
     public int getStatusCode() {
@@ -55,7 +65,7 @@ public class ApiResponse<T> {
     public String toString() {
         return "ApiResponse{" +
                 "statusCode=" + statusCode +
-                ", message='" + message + '\'' +
+                ", message='" + message + "'" +
                 ", result=" + result +
                 '}';
     }

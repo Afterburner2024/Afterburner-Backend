@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.afterburner.common.codes.ErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,9 +60,9 @@ public class ProjectTeamService {
 
 	// 팀장이 승인
 	@Transactional
-	public ProjectTeamDTO approveTeamMember(Integer projectId, Integer projectTeamId) {
+		public ProjectTeamDTO approveTeamMember(Integer projectId, Integer projectTeamId) {
 		ProjectTeam teamMember = projectTeamRepository.findByProjectTeamIdAndProjectTeamUserId(projectId, projectTeamId)
-			.orElseThrow(() -> new EntityNotFoundException("팀원을 찾을 수 없습니다."));
+			.orElseThrow(() -> new TeamMemberNotFoundException(ErrorCode.TEAM_MEMBER_NOT_FOUND));
 
 		// 신청 상태를 APPROVED로 변경
 		teamMember.setProjectTeamMember(ProjectTeamMember.APPROVED);
@@ -74,7 +75,7 @@ public class ProjectTeamService {
 	@Transactional
 	public ProjectTeamDTO rejectTeamMember(Integer projectId, Integer projectTeamId) {
 		ProjectTeam teamMember = projectTeamRepository.findByProjectTeamIdAndProjectTeamUserId(projectId, projectTeamId)
-			.orElseThrow(() -> new EntityNotFoundException("팀원을 찾을 수 없습니다."));
+			.orElseThrow(() -> new TeamMemberNotFoundException(ErrorCode.TEAM_MEMBER_NOT_FOUND));
 
 		// 신청 상태를 REJECTED로 변경
 		teamMember.setProjectTeamMember(ProjectTeamMember.REJECTED);
@@ -120,7 +121,7 @@ public class ProjectTeamService {
 
 		// 팀원이 존재하는지 확인
 		ProjectTeam projectTeam = projectTeamRepository.findById(projectTeamId)
-			.orElseThrow(() -> new TeamMemberNotFoundException("ID: " + projectTeamId + "의 팀원을 찾을 수 없습니다."));
+			.orElseThrow(() -> new TeamMemberNotFoundException(ErrorCode.TEAM_MEMBER_NOT_FOUND));
 
 		projectTeam.setProjectTeamRole(projectTeamDTO.getProjectTeamRole()); // 팀장, 부팀장, 팀원
 		projectTeam.setProjectTeamPart(projectTeamDTO.getProjectTeamPart()); // 백엔드, 프론트, 등등
@@ -145,7 +146,7 @@ public class ProjectTeamService {
 	public boolean removeTeamMember(Integer projectId, Integer projectTeamId) {
 		// 팀원이 존재하는지 확인
 		ProjectTeam projectTeam = projectTeamRepository.findById(projectTeamId)
-			.orElseThrow(() -> new TeamMemberNotFoundException("ID: " + projectTeamId + "의 팀원을 찾을 수 없습니다."));
+			.orElseThrow(() -> new TeamMemberNotFoundException(ErrorCode.TEAM_MEMBER_NOT_FOUND));
 
 		projectTeamRepository.delete(projectTeam);
 		logger.info("팀원 삭제: {}", projectTeamId);
