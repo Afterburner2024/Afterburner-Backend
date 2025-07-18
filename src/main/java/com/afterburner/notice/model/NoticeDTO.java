@@ -27,10 +27,8 @@ public class NoticeDTO {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDateTime noticeCreatedAt;
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDateTime noticeUpdatedAt;
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDateTime noticeDeletedAt;
 
 	public NoticeDTO() {

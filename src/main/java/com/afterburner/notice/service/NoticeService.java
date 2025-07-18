@@ -29,8 +29,6 @@ public class NoticeService {
 		notice.setNoticeContent(noticeDTO.getNoticeContent());
 		notice.setNoticeStatus(PostStatus.DEFAULT);
 		notice.setNoticeCreatedAt(LocalDateTime.now());
-		notice.setNoticeUpdatedAt(LocalDateTime.now());
-		notice.setNoticeDeletedAt(null);
 
 		Notice savedNotice = noticeRepository.save(notice);
 
