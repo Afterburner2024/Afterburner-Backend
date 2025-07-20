@@ -15,12 +15,22 @@
 <br/>
 
 ## 기술 스택
-+ 언어: Java - TEMURINJDK 17
-+ 프레임워크: Spring Boot - v3.3.3
-+ 데이터베이스: PostgreSQL, MongoDB
-+ IDE Tool: IntelliJ IDEA
-+ 기타 도구: Netlify, Docker, Jenkins, Gradle
++ 언어: Java - TEMURINJDK 21
++ 프레임워크: Spring Boot - v3.5.3, Spring Security
++ 데이터베이스: PostgreSQL, JPA (Hibernate)
++ 인증: JSON Web Token (JWT)
++ 빌드 도구: Gradle
++ API 문서화: Springdoc OpenAPI (Swagger UI)
++ 컨테이너: Docker Compose
 
+<br/>
+
+## ✨ 주요 기능
++ **사용자 관리**: JWT 기반의 안전한 회원가입 및 로그인/로그아웃 기능을 제공합니다.
++ **커뮤니티**: 사용자들이 자유롭게 소통할 수 있는 커뮤니티, 공지사항, Q&A 게시판 기능을
+      제공합니다.
++ **프로젝트/스터디**: 사용자들이 프로젝트 및 스터디 그룹을 생성하고, 팀원을 모집하고, 관리할 수
+      있습니다.
 <br/>
 
 ## 설치 방법
@@ -58,6 +68,23 @@ gradle dependencies
 
 <br/>
 
+### **환경 설정**
+
+`src/main/resources/application.yml` (또는 `.properties`) 파일에 데이터베이스 연결 정보 등 환경에
+맞는 설정을 입력합니다.
+```spring:
+datasource:
+    url: jdbc:mysql://localhost:3306/afterburner_db
+    username: your_db_username
+    password: your_db_password
+driver-class-name: com.mysql.cj.jdbc.Driver
+jpa:
+    hibernate:
+    ddl-auto: create
+    show-sql: true
+```
+
+<br/>
 ### **애플리케이션 실행**
 
 ```bash
@@ -71,6 +98,22 @@ gradle dependencies
 ```
 
 <br/>
+
+#### Docker Compose로 실행
+
+`docker-compose.yml` 파일이 프로젝트 루트에 포함되어 있어, Docker만 설치되어 있다면 더 쉽게
+실행할 수 있습니다.
+
+```bash
+docker-compose up --build
+```
+
+## 📖 API 문서
+ 서버 실행 후, 아래 주소에서 API 문서를 확인하고 테스트할 수 있습니다.
+- **Swagger UI**
+ ```
+http://localhost:8080/swagger-ui/index.html
+```
 
 ## 프로젝트 패키지 구조
 - **패키지 구조**
