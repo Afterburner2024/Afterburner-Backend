@@ -1,26 +1,15 @@
 package com.afterburner.studygroup.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.afterburner.common.codes.ErrorCode;
 import com.afterburner.common.codes.SuccessCode;
 import com.afterburner.studygroup.model.dto.StudyGroupDTO;
 import com.afterburner.studygroup.service.StudyGroupService;
-
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/study-group")
@@ -33,76 +22,39 @@ public class StudyGroupController {
 		this.studyGroupService = studyGroupService;
 	}
 
+	// 등록
 	@PostMapping
-	public ResponseEntity<?> createStudyGroup(@Valid @RequestBody StudyGroupDTO studyGroupDTO) {
-		if (studyGroupDTO == null){
-			return ResponseEntity.status(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus()).body(ErrorCode.REQUEST_BODY_MISSING_ERROR.getMessage());
-		}
-
+	public ResponseEntity<StudyGroupDTO> createStudyGroup(@Valid @RequestBody StudyGroupDTO studyGroupDTO) {
 		StudyGroupDTO createdDTO = studyGroupService.createPost(studyGroupDTO);
-
-		if (createdDTO != null) {
-			return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(createdDTO);
-		} else {
-			return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus()).body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
-		}
+		return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(createdDTO);
 	}
 
+	//	수정
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateStudyGroup(@Valid @RequestBody StudyGroupDTO studyGroupDTO, @PathVariable("id") Integer id) {
-		if (id == null || id <= 0) {
-			return ResponseEntity.status(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getStatus()).body(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getMessage());
-		}
-
-		if (studyGroupDTO == null) {
-			return ResponseEntity.status(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus()).body(ErrorCode.REQUEST_BODY_MISSING_ERROR.getMessage());
-		}
+	public ResponseEntity<StudyGroupDTO> updateStudyGroup(@PathVariable("id") Integer id, @Valid @RequestBody StudyGroupDTO studyGroupDTO) {
 
 		StudyGroupDTO updatedDTO = studyGroupService.updatePost(studyGroupDTO, id);
-
-		if (updatedDTO != null) {
-			return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(updatedDTO);
-		} else {
-			return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus()).body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
-		}
+		return ResponseEntity.status(SuccessCode.UPDATE.getStatus()).body(updatedDTO); // UPDATE 성공 코드로 변경
 	}
 
+	// 삭제
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteStudyGroup(@PathVariable("id") Integer id) {
-		if (id == null || id <= 0) {
-			return ResponseEntity.status(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getStatus()).body(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getMessage());
-		}
-
-
-		StudyGroupDTO deletedDTO = studyGroupService.deletePost(id);
-
-		if (deletedDTO != null) {
-			return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(deletedDTO);
-		} else {
-			return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus()).body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
-		}
+	public ResponseEntity<Void> deleteStudyGroup(@PathVariable("id") Integer id) {
+		studyGroupService.deletePost(id);
+		return ResponseEntity.status(SuccessCode.DELETE.getStatus()).build();
 	}
 
+	// 조회
 	@GetMapping
-	public List<StudyGroupDTO> getAllMarkets() {
-		return studyGroupService.allStudyGroupList();
+	public ResponseEntity<List<StudyGroupDTO>> getAllStudyGroups() {
+		List<StudyGroupDTO> studyGroupList = studyGroupService.allStudyGroupList();
+		return ResponseEntity.ok(studyGroupList);
 	}
 
+	// 상세조회
 	@GetMapping("/{id}")
-	public ResponseEntity<?> detail(@PathVariable("id") Integer id) {
-		Map<String, Object> response = new HashMap<>();
-
-		if(id <= 0 || id == null) {
-			return ResponseEntity.status(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getStatus()).body(ErrorCode.MISSING_REQUEST_PARAMETER_ERROR.getMessage());
-		}
-
+	public ResponseEntity<StudyGroupDTO> getStudyGroupDetail(@PathVariable("id") Integer id) {
 		StudyGroupDTO findDTO = studyGroupService.detailPost(id);
-
-		if (findDTO != null) {
-			return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(findDTO);
-		} else {
-			return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus()).body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
-		}
+		return ResponseEntity.ok(findDTO);
 	}
-
 }

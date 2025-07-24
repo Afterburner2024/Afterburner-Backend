@@ -90,7 +90,7 @@ public class NoticeService {
 
 		notice.setNoticeTitle(noticeDTO.getNoticeTitle());
 		notice.setNoticeContent(noticeDTO.getNoticeContent());
-		notice.setNoticeStatus(noticeDTO.getNoticeStatus());
+		notice.setNoticeStatus(PostStatus.DEFAULT);
 		notice.setNoticeUpdatedAt(LocalDateTime.now());
 
 		Notice updatedNotice = noticeRepository.save(notice);

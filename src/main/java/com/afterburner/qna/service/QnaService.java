@@ -101,6 +101,7 @@ public class QnaService {
         qna.setQnaTitle(qnaDTO.getQnaTitle());
         qna.setQnaContent(qnaDTO.getQnaContent());
         qna.setQnaUpdatedAt(LocalDateTime.now());
+        qna.setQnaStatus(PostStatus.DEFAULT);
 
         QnaEntity updatedQna = qnaRepository.save(qna);
 

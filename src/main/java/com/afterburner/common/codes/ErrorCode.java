@@ -75,7 +75,11 @@ public enum ErrorCode {
     USER_EMAIL_ALREADY_EXISTS(409, "User with this email already exists"),
 
     // Team related errors
-    TEAM_MEMBER_NOT_FOUND(404, "Team member not found"); // End
+    TEAM_MEMBER_NOT_FOUND(404, "Team member not found"),
+
+    NOT_FOUND(404, "Not Found"),
+    FORBIDDEN(405, "FORBIDDEN"),
+    INVALID_PARAMETER(400, "Invalid Parameter"); // End
 
 
     private int status;

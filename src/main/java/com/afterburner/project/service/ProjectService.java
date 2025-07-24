@@ -125,7 +125,7 @@ public class ProjectService {
 		project.setProjectContent(projectDTO.getProjectContent());
 		project.setProjectLink(projectDTO.getProjectLink());
 		project.setProjectTechStack(projectDTO.getProjectTechStack());
-		project.setProjectStatus(projectDTO.getProjectStatus());
+		project.setProjectStatus(PostStatus.DEFAULT);
 		project.setProjectUserId(projectDTO.getProjectUserId());
 
 		projectRepository.save(project);

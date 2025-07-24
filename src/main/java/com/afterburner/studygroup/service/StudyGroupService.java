@@ -1,19 +1,18 @@
 package com.afterburner.studygroup.service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.afterburner.common.enums.PostStatus;
 import com.afterburner.studygroup.model.dto.StudyGroupDTO;
 import com.afterburner.studygroup.model.entity.StudyGroupEntity;
 import com.afterburner.studygroup.repository.StudyGroupRepository;
-
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+// import org.springframework.security.access.AccessDeniedException; // Spring Security 사용 시 권장
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StudyGroupService {
@@ -25,139 +24,84 @@ public class StudyGroupService {
 		this.studyGroupRepository = studyGroupRepository;
 	}
 
+	private StudyGroupDTO toDto(StudyGroupEntity entity) {
+		StudyGroupDTO dto = new StudyGroupDTO();
+		dto.setStudyGroupId(entity.getStudyGroupId());
+		dto.setStudyGroupCategory(entity.getStudyGroupCategory());
+		dto.setStudyGroupTitle(entity.getStudyGroupTitle());
+		dto.setStudyGroupContent(entity.getStudyGroupContent());
+		dto.setStudyGroupCreatedAt(entity.getStudyGroupCreatedAt());
+		dto.setStudyGroupUpdatedAt(entity.getStudyGroupUpdatedAt());
+		dto.setStudyGroupStatus(entity.getStudyGroupStatus());
+		dto.setStudyGroupUserId(entity.getStudyGroupUserId());
+		return dto;
+	}
+
 	@Transactional
 	public StudyGroupDTO createPost(StudyGroupDTO studyGroupDTO) {
-		// 토큰가져와서 userId 꺼내오기
-		// userId 가 없을경우 로그인 정보가 없습니다 exception처리
+		// String currentUserId = ... ;
+		// studyGroupDTO.setStudyGroupUserId(currentUserId);
 
 		StudyGroupEntity entity = new StudyGroupEntity.Builder()
-			.studyGroupCategory(studyGroupDTO.getStudyGroupCategory())
-			.studyGroupTitle(studyGroupDTO.getStudyGroupTitle())
-			.studyGroupContent(studyGroupDTO.getStudyGroupContent())
-			.studyGroupStatus(studyGroupDTO.getStudyGroupStatus())
-			.studyGroupUserId(studyGroupDTO.getStudyGroupUserId())
-			.build();
+				.studyGroupCategory(studyGroupDTO.getStudyGroupCategory())
+				.studyGroupTitle(studyGroupDTO.getStudyGroupTitle())
+				.studyGroupContent(studyGroupDTO.getStudyGroupContent())
+				.studyGroupStatus(studyGroupDTO.getStudyGroupStatus())
+				.studyGroupUserId(studyGroupDTO.getStudyGroupUserId())
+				.build();
 
 		StudyGroupEntity savedEntity = studyGroupRepository.save(entity);
-
-		if (savedEntity != null) {
-			StudyGroupDTO savedDTO = new StudyGroupDTO();
-			savedDTO.setStudyGroupId(savedEntity.getStudyGroupId());
-			savedDTO.setStudyGroupCategory(savedEntity.getStudyGroupCategory());
-			savedDTO.setStudyGroupTitle(savedEntity.getStudyGroupTitle());
-			savedDTO.setStudyGroupContent(savedEntity.getStudyGroupContent());
-			savedDTO.setStudyGroupCreatedAt(savedEntity.getStudyGroupCreatedAt());
-			savedDTO.setStudyGroupUpdatedAt(savedEntity.getStudyGroupUpdatedAt());
-			savedDTO.setStudyGroupStatus(savedEntity.getStudyGroupStatus());
-			savedDTO.setStudyGroupUserId(savedEntity.getStudyGroupUserId());
-
-			return savedDTO;
-		} else {
-			return null;
-		}
+		return toDto(savedEntity);
 	}
 
 	@Transactional
 	public StudyGroupDTO updatePost(StudyGroupDTO studyGroupDTO, Integer id) {
-		// 토큰가져와서 userId 꺼내오기
-		// userId 가 없을경우 로그인 정보가 없습니다 exception처리
-		Optional<StudyGroupEntity> studyGroupEntity = studyGroupRepository.findById(id);
+		String currentUserId = "testUser"; // 예시: 현재 로그인한 사용자 ID
 
-		// 위에서 꺼낸 userId랑 조회한 게시글의 userId가 같은지 확인 -> 동일인이어야 수정 가능함
+		// 1. ID로 게시글을 조회하고, 없으면 예외를 발생.
+		StudyGroupEntity entity = studyGroupRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다. id: " + id));
 
-		// 같으면
-		StudyGroupEntity entity = studyGroupEntity.get();
+		// 2. 게시글 작성자와 현재 로그인한 사용자가 동일한지 권한을 확인
+		if (!entity.getStudyGroupUserId().equals(currentUserId)) {
+			// Spring Security 사용 시 AccessDeniedException("권한이 없습니다.") 사용
+			throw new SecurityException("게시글을 수정할 권한이 없습니다.");
+		}
+
+		// 3. DTO의 내용으로 엔티티의 값을 변경 (JPA의 Dirty Checking 활용)
 		entity.setStudyGroupCategory(studyGroupDTO.getStudyGroupCategory());
 		entity.setStudyGroupTitle(studyGroupDTO.getStudyGroupTitle());
 		entity.setStudyGroupContent(studyGroupDTO.getStudyGroupContent());
+		entity.setStudyGroupStatus(PostStatus.DEFAULT);
 
-		StudyGroupEntity savedEntity = studyGroupRepository.save(entity);
-
-		if (savedEntity != null) {
-			StudyGroupDTO savedDTO = new StudyGroupDTO();
-			savedDTO.setStudyGroupId(savedEntity.getStudyGroupId());
-			savedDTO.setStudyGroupCategory(savedEntity.getStudyGroupCategory());
-			savedDTO.setStudyGroupTitle(savedEntity.getStudyGroupTitle());
-			savedDTO.setStudyGroupContent(savedEntity.getStudyGroupContent());
-			savedDTO.setStudyGroupCreatedAt(savedEntity.getStudyGroupCreatedAt());
-			savedDTO.setStudyGroupUpdatedAt(savedEntity.getStudyGroupUpdatedAt());
-			savedDTO.setStudyGroupStatus(savedEntity.getStudyGroupStatus());
-			savedDTO.setStudyGroupUserId(savedEntity.getStudyGroupUserId());
-
-			return savedDTO;
-		} else {
-			return null;
-		}
+		return toDto(entity);
 	}
 
 	@Transactional
-	public StudyGroupDTO deletePost(Integer id) {
-		// 토큰가져와서 userId 꺼내오기
-		// userId 가 없을경우 로그인 정보가 없습니다 exception처리
-		Optional<StudyGroupEntity> studyGroupEntity = studyGroupRepository.findById(id);
+	public void deletePost(Integer id) {
+		String currentUserId = "testUser"; // 예시: 현재 로그인한 사용자 ID
 
-		// 위에서 꺼낸 userId랑 조회한 게시글의 userId가 같은지 확인 -> 동일인이어야 삭제 가능함
-		// 같으면
+		StudyGroupEntity entity = studyGroupRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다. id: " + id));
 
-		if (studyGroupEntity.isPresent()) { // 게시글 존재하면
-			StudyGroupEntity entity = studyGroupEntity.get();
-			entity.setStudyGroupStatus(PostStatus.DELETED); // 삭제상태로 변경
-			entity.setStudyGroupDeletedAt(LocalDateTime.now());
-			StudyGroupEntity savedEntity = studyGroupRepository.save(entity);
-
-			StudyGroupDTO resultDTO = new StudyGroupDTO();
-			resultDTO.setStudyGroupUserId(savedEntity.getStudyGroupId());
-			resultDTO.setStudyGroupCategory(savedEntity.getStudyGroupCategory());
-			resultDTO.setStudyGroupTitle(savedEntity.getStudyGroupTitle());
-			resultDTO.setStudyGroupContent(savedEntity.getStudyGroupContent());
-			resultDTO.setStudyGroupCreatedAt(savedEntity.getStudyGroupCreatedAt());
-			resultDTO.setStudyGroupUpdatedAt(savedEntity.getStudyGroupUpdatedAt());
-			resultDTO.setStudyGroupStatus(savedEntity.getStudyGroupStatus());
-			resultDTO.setStudyGroupUserId(savedEntity.getStudyGroupUserId());
-
-			return resultDTO;
-
-		} else {
-			return null;
+		if (!entity.getStudyGroupUserId().equals(currentUserId)) {
+			throw new SecurityException("게시글을 삭제할 권한이 없습니다.");
 		}
+
+		// 실제 데이터를 삭제하는 대신, 상태를 'DELETED'로 변경 (Soft Delete)
+		entity.setStudyGroupStatus(PostStatus.DELETED);
+		entity.setStudyGroupDeletedAt(LocalDateTime.now());
 	}
 
 	public List<StudyGroupDTO> allStudyGroupList() {
-		List<StudyGroupEntity> entities = studyGroupRepository.findAll();
-		List<StudyGroupDTO> studyGroupList = new ArrayList<>();
-
-		if (entities.size() > 0) {
-			for (StudyGroupEntity entity : entities) {
-				StudyGroupDTO dto = new StudyGroupDTO();
-				dto.setStudyGroupId(entity.getStudyGroupId());
-				dto.setStudyGroupCategory(entity.getStudyGroupCategory());
-				dto.setStudyGroupTitle(entity.getStudyGroupTitle());
-				dto.setStudyGroupContent(entity.getStudyGroupContent());
-				dto.setStudyGroupCreatedAt(entity.getStudyGroupCreatedAt());
-				dto.setStudyGroupUpdatedAt(entity.getStudyGroupUpdatedAt());
-				dto.setStudyGroupStatus(entity.getStudyGroupStatus());
-				dto.setStudyGroupUserId(entity.getStudyGroupUserId());
-				studyGroupList.add(dto);
-			}
-			return studyGroupList;
-		}
-		return new ArrayList<>();
+		return studyGroupRepository.findAll().stream()
+				.map(this::toDto)
+				.collect(Collectors.toList());
 	}
 
 	public StudyGroupDTO detailPost(Integer id) {
-		Optional<StudyGroupEntity> findEntity = studyGroupRepository.findById(id);
-		StudyGroupDTO detailDTO = new StudyGroupDTO();
-
-		if (findEntity.isPresent()) {
-			detailDTO.setStudyGroupId(findEntity.get().getStudyGroupId());
-			detailDTO.setStudyGroupCategory(findEntity.get().getStudyGroupCategory());
-			detailDTO.setStudyGroupTitle(findEntity.get().getStudyGroupTitle());
-			detailDTO.setStudyGroupContent(findEntity.get().getStudyGroupContent());
-			detailDTO.setStudyGroupCreatedAt(findEntity.get().getStudyGroupCreatedAt());
-			detailDTO.setStudyGroupUpdatedAt(findEntity.get().getStudyGroupUpdatedAt());
-			detailDTO.setStudyGroupStatus(findEntity.get().getStudyGroupStatus());
-			detailDTO.setStudyGroupUserId(findEntity.get().getStudyGroupUserId());
-		}
-		return detailDTO;
+		return studyGroupRepository.findById(id)
+				.map(this::toDto)
+				.orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다. id: " + id));
 	}
 }
