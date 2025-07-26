@@ -34,7 +34,7 @@ public class QnaController {
         QnaDTO createdQna = qnaService.createQna(qnaDTO);
 
         if (createdQna != null) {
-            ApiResponse<QnaDTO> response = new ApiResponse.Builder<QnaDTO>()
+            ApiResponse<QnaDTO> response = ApiResponse.<QnaDTO>builder()
                     .statusCode(SuccessCode.INSERT.getStatus())
                     .message(SuccessCode.INSERT.getMessage())
                     .result(createdQna)
@@ -52,7 +52,7 @@ public class QnaController {
         List<QnaDTO> qnas = qnaService.getAllQnas();
 
         if (qnas != null && !qnas.isEmpty()) {
-            ApiResponse<List<QnaDTO>> response = new ApiResponse.Builder<List<QnaDTO>>()
+            ApiResponse<List<QnaDTO>> response = ApiResponse.<List<QnaDTO>>builder()
                     .statusCode(SuccessCode.SELECT.getStatus())
                     .message(SuccessCode.SELECT.getMessage())
                     .result(qnas)
@@ -70,7 +70,7 @@ public class QnaController {
         QnaDTO qna = qnaService.getQnaById(qnaId);
 
         if (qna != null) {
-            ApiResponse<QnaDTO> response = new ApiResponse.Builder<QnaDTO>()
+            ApiResponse<QnaDTO> response = ApiResponse.<QnaDTO>builder()
                     .statusCode(SuccessCode.SELECT.getStatus())
                     .message(SuccessCode.SELECT.getMessage())
                     .result(qna)
@@ -93,7 +93,7 @@ public class QnaController {
         QnaDTO updatedQna = qnaService.updateQna(qnaId, qnaDTO);
 
         if (updatedQna != null) {
-            ApiResponse<QnaDTO> response = new ApiResponse.Builder<QnaDTO>()
+            ApiResponse<QnaDTO> response = ApiResponse.<QnaDTO>builder()
                     .statusCode(SuccessCode.UPDATE.getStatus())
                     .message(SuccessCode.UPDATE.getMessage())
                     .result(updatedQna)
@@ -116,7 +116,7 @@ public class QnaController {
         QnaDTO deletedQna = qnaService.deleteQna(qnaId);
 
         if (deletedQna != null) {
-            ApiResponse<QnaDTO> response = new ApiResponse.Builder<QnaDTO>()
+            ApiResponse<QnaDTO> response = ApiResponse.<QnaDTO>builder()
                     .statusCode(SuccessCode.DELETE.getStatus())
                     .message(SuccessCode.DELETE.getMessage())
                     .result(deletedQna)
@@ -139,7 +139,7 @@ public class QnaController {
         QnaDTO answeredQna = qnaService.addAnswer(qnaId, qnaDTO);
 
         if (answeredQna != null) {
-            ApiResponse<QnaDTO> response = new ApiResponse.Builder<QnaDTO>()
+            ApiResponse<QnaDTO> response = ApiResponse.<QnaDTO>builder()
                     .statusCode(SuccessCode.UPDATE.getStatus())
                     .message(SuccessCode.UPDATE.getMessage())
                     .result(answeredQna)

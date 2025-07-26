@@ -53,7 +53,7 @@ public class ProjectTeamController {
 		// 프로젝트 존재 여부 확인
 		if (projectService.getProjectById(projectId) == null) {
 			return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
-				.body(new ApiResponse.Builder<ProjectTeamDTO>()
+				.body(ApiResponse.<ProjectTeamDTO>builder()
 					.statusCode(ErrorCode.NOT_FOUND_ERROR.getStatus())
 					.message(ErrorCode.NOT_FOUND_ERROR.getMessage())
 					.build());
@@ -66,14 +66,14 @@ public class ProjectTeamController {
 
 		if (joinedTeam != null) {
 			return ResponseEntity.status(HttpStatus.CREATED)
-				.body(new ApiResponse.Builder<ProjectTeamDTO>()
+				.body(ApiResponse.<ProjectTeamDTO>builder()
 					.statusCode(SuccessCode.INSERT.getStatus())
 					.message(SuccessCode.INSERT.getMessage())
 					.result(joinedTeam)
 					.build());
 		} else {
 			return ResponseEntity.status(ErrorCode.INSERT_ERROR.getStatus())
-				.body(new ApiResponse.Builder<ProjectTeamDTO>()
+				.body(ApiResponse.<ProjectTeamDTO>builder()
 					.statusCode(ErrorCode.INSERT_ERROR.getStatus())
 					.message(ErrorCode.INSERT_ERROR.getMessage())
 					.build());
@@ -91,7 +91,7 @@ public class ProjectTeamController {
 		// 프로젝트 존재 여부 확인
 		if (projectService.getProjectById(projectId) == null) {
 			return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
-				.body(new ApiResponse.Builder<ProjectTeamDTO>()
+				.body(ApiResponse.<ProjectTeamDTO>builder()
 					.statusCode(ErrorCode.NOT_FOUND_ERROR.getStatus())
 					.message(ErrorCode.NOT_FOUND_ERROR.getMessage())
 					.build());
@@ -101,14 +101,14 @@ public class ProjectTeamController {
 		ProjectTeamDTO updatedMember = projectTeamService.approveTeamMember(projectId, projectTeamId);
 
 		if (updatedMember != null) {
-			return ResponseEntity.ok(new ApiResponse.Builder<ProjectTeamDTO>()
+			return ResponseEntity.ok(ApiResponse.<ProjectTeamDTO>builder()
 				.statusCode(SuccessCode.UPDATE.getStatus())
 				.message("참가 신청이 승인되었습니다.")
 				.result(updatedMember)
 				.build());
 		} else {
 			return ResponseEntity.status(ErrorCode.UPDATE_ERROR.getStatus())
-				.body(new ApiResponse.Builder<ProjectTeamDTO>()
+				.body(ApiResponse.<ProjectTeamDTO>builder()
 					.statusCode(ErrorCode.UPDATE_ERROR.getStatus())
 					.message("참가 신청 승인에 실패했습니다.")
 					.build());
@@ -126,7 +126,7 @@ public class ProjectTeamController {
 		// 프로젝트 존재 여부 확인
 		if (projectService.getProjectById(projectId) == null) {
 			return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
-				.body(new ApiResponse.Builder<ProjectTeamDTO>()
+				.body(ApiResponse.<ProjectTeamDTO>builder()
 					.statusCode(ErrorCode.NOT_FOUND_ERROR.getStatus())
 					.message(ErrorCode.NOT_FOUND_ERROR.getMessage())
 					.build());
@@ -136,14 +136,14 @@ public class ProjectTeamController {
 		ProjectTeamDTO updatedMember = projectTeamService.rejectTeamMember(projectId, projectTeamId);
 
 		if (updatedMember != null) {
-			return ResponseEntity.ok(new ApiResponse.Builder<ProjectTeamDTO>()
+			return ResponseEntity.ok(ApiResponse.<ProjectTeamDTO>builder()
 				.statusCode(SuccessCode.UPDATE.getStatus())
 				.message("참가 신청이 거부되었습니다.")
 				.result(updatedMember)
 				.build());
 		} else {
 			return ResponseEntity.status(ErrorCode.UPDATE_ERROR.getStatus())
-				.body(new ApiResponse.Builder<ProjectTeamDTO>()
+				.body(ApiResponse.<ProjectTeamDTO>builder()
 					.statusCode(ErrorCode.UPDATE_ERROR.getStatus())
 					.message("참가 신청 거부에 실패했습니다.")
 					.build());
@@ -160,21 +160,21 @@ public class ProjectTeamController {
 		if (projectService.getProjectById(projectId) == null) {
 			logger.warn("ID: {}의 프로젝트를 찾을 수 없어 팀원을 조회할 수 없습니다.", projectId);
 			return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
-				.body(new ApiResponse.Builder<List<ProjectTeamDTO>>()
-					.statusCode(ErrorCode.NOT_FOUND_ERROR.getStatus())
+                                .body(ApiResponse.<List<ProjectTeamDTO>>builder()
+                                        .statusCode(ErrorCode.NOT_FOUND_ERROR.getStatus())
 					.message(ErrorCode.NOT_FOUND_ERROR.getMessage())
 					.build());
 		}
 
 		// 서비스에서 승인된 팀원만 가져오기
-		List<ProjectTeamDTO> teamMembers = projectTeamService.getAllTeamMembers(projectId);
-		ApiResponse<List<ProjectTeamDTO>> response = new ApiResponse.Builder<List<ProjectTeamDTO>>()
-			.statusCode(SuccessCode.SELECT.getStatus())
-			.message(SuccessCode.SELECT.getMessage())
-			.result(teamMembers)
-			.build();
-		return ResponseEntity.ok(response);
-	}
+                List<ProjectTeamDTO> teamMembers = projectTeamService.getAllTeamMembers(projectId);
+                ApiResponse<List<ProjectTeamDTO>> response = ApiResponse.<List<ProjectTeamDTO>>builder()
+                        .statusCode(SuccessCode.SELECT.getStatus())
+                        .message(SuccessCode.SELECT.getMessage())
+                        .result(teamMembers)
+                        .build();
+                return ResponseEntity.ok(response);
+        }
 
 	// 팀원 역할 변경 및 파트 수정 (메서드 추가 필요)
 	@PutMapping("/{projectTeamId}")
@@ -189,7 +189,7 @@ public class ProjectTeamController {
 		if (projectService.getProjectById(projectId) == null) {
 			logger.warn("ID: {}의 프로젝트를 찾을 수 없어 팀원 정보를 수정할 수 없습니다.", projectId);
 			return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
-				.body(new ApiResponse.Builder<ProjectTeamDTO>()
+				.body(ApiResponse.<ProjectTeamDTO>builder()
 					.statusCode(ErrorCode.NOT_FOUND_ERROR.getStatus())
 					.message(ErrorCode.NOT_FOUND_ERROR.getMessage())
 					.build());
@@ -200,13 +200,13 @@ public class ProjectTeamController {
 		if (updatedMember == null) {
 			logger.error("팀원 정보 수정에 실패했습니다.");
 			return ResponseEntity.status(ErrorCode.UPDATE_ERROR.getStatus())
-				.body(new ApiResponse.Builder<ProjectTeamDTO>()
+				.body(ApiResponse.<ProjectTeamDTO>builder()
 					.statusCode(ErrorCode.UPDATE_ERROR.getStatus())
 					.message(ErrorCode.UPDATE_ERROR.getMessage())
 					.build());
 		}
 
-		ApiResponse<ProjectTeamDTO> response = new ApiResponse.Builder<ProjectTeamDTO>()
+		ApiResponse<ProjectTeamDTO> response = ApiResponse.<ProjectTeamDTO>builder()
 			.statusCode(SuccessCode.UPDATE.getStatus())
 			.message(SuccessCode.UPDATE.getMessage())
 			.result(updatedMember)
@@ -226,7 +226,7 @@ public class ProjectTeamController {
 		if (projectService.getProjectById(projectId) == null) {
 			logger.warn("ID: {}의 프로젝트를 찾을 수 없어 팀원을 삭제할 수 없습니다.", projectId);
 			return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
-				.body(new ApiResponse.Builder<Void>()
+				.body(ApiResponse.<Void>builder()
 					.statusCode(ErrorCode.NOT_FOUND_ERROR.getStatus())
 					.message(ErrorCode.NOT_FOUND_ERROR.getMessage())
 					.build());
@@ -237,14 +237,14 @@ public class ProjectTeamController {
 		if (!isRemoved) {
 			logger.error("팀원 삭제에 실패했습니다.");
 			return ResponseEntity.status(ErrorCode.DELETE_ERROR.getStatus())
-				.body(new ApiResponse.Builder<Void>()
+				.body(ApiResponse.<Void>builder()
 					.statusCode(ErrorCode.DELETE_ERROR.getStatus())
 					.message(ErrorCode.DELETE_ERROR.getMessage())
 					.build());
 		}
 
 		logger.info("ID: {}의 프로젝트에서 팀원 ID: {}가 성공적으로 삭제되었습니다.", projectId, projectTeamId);
-		ApiResponse<Void> response = new ApiResponse.Builder<Void>()
+		ApiResponse<Void> response = ApiResponse.<Void>builder()
 			.statusCode(SuccessCode.DELETE.getStatus())
 			.message(SuccessCode.DELETE.getMessage())
 			.build();

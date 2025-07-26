@@ -42,13 +42,13 @@ public class StudyGroupService {
 		// String currentUserId = ... ;
 		// studyGroupDTO.setStudyGroupUserId(currentUserId);
 
-		StudyGroupEntity entity = new StudyGroupEntity.Builder()
-				.studyGroupCategory(studyGroupDTO.getStudyGroupCategory())
-				.studyGroupTitle(studyGroupDTO.getStudyGroupTitle())
-				.studyGroupContent(studyGroupDTO.getStudyGroupContent())
-				.studyGroupStatus(studyGroupDTO.getStudyGroupStatus())
-				.studyGroupUserId(studyGroupDTO.getStudyGroupUserId())
-				.build();
+		StudyGroupEntity entity = StudyGroupEntity.builder()
+		.studyGroupCategory(studyGroupDTO.getStudyGroupCategory())
+		.studyGroupTitle(studyGroupDTO.getStudyGroupTitle())
+		.studyGroupContent(studyGroupDTO.getStudyGroupContent())
+		.studyGroupStatus(studyGroupDTO.getStudyGroupStatus())
+		.studyGroupUserId(studyGroupDTO.getStudyGroupUserId())
+		.build();
 
 		StudyGroupEntity savedEntity = studyGroupRepository.save(entity);
 		return toDto(savedEntity);

@@ -36,47 +36,29 @@ public class ProjectService {
 		}
 	}
 
-	// 게시글 등록
+	// 등록
 	@Transactional
 	public ProjectDTO createProject(ProjectDTO projectDTO) throws Exception {
 		validateProjectDTO(projectDTO);
 		logger.info("프로젝트 등록 중: 제목: {}, 내용: {}", projectDTO.getProjectTitle(), projectDTO.getProjectContent());
 
-		Project project = new Project.Builder()
-			.projectTitle(projectDTO.getProjectTitle())
-			.projectContent(projectDTO.getProjectContent())
-			.projectLink(projectDTO.getProjectLink())
-			.projectStatus(PostStatus.DEFAULT)
-			.projectUserId(projectDTO.getProjectUserId())
-			.build();
-
-		project.setProjectTechStack(projectDTO.getProjectTechStack());
+		Project project = Project.builder()
+				.projectTitle(projectDTO.getProjectTitle())
+				.projectContent(projectDTO.getProjectContent())
+				.projectLink(projectDTO.getProjectLink())
+				.projectStatus(PostStatus.DEFAULT)
+				.projectUserId(projectDTO.getProjectUserId())
+				.projectTechStack(projectDTO.getProjectTechStack())
+				.projectRecruitmentRoles(projectDTO.getProjectRecruitmentRoles())
+				.projectRegion(projectDTO.getProjectRegion())
+				.build();
 		projectRepository.save(project);
 		logger.info("프로젝트가 성공적으로 등록되었습니다. ID: {}", project.getProjectId());
 
-		// DTO 생성 및 반환
 		return new ProjectDTO(
-			project.getProjectId(),
-			project.getProjectTitle(),
-			project.getProjectContent(),
-			project.getProjectLink(),
-			project.getProjectCreatedAt(),
-			project.getProjectUpdatedAt(),
-			project.getProjectDeletedAt(),
-			project.getProjectFinishedAt(),
-			project.getProjectStatus(),
-			project.getProjectTechStack(),
-			project.getProjectUserId()
-		);
-	}
-
-	// 전체 조회
-	public List<ProjectDTO> getAllProjects() {
-		logger.info("모든 프로젝트를 조회 중입니다.");
-		return projectRepository.findAll().stream()
-			.map(project -> new ProjectDTO(
 				project.getProjectId(),
 				project.getProjectTitle(),
+				project.getProjectSummary(),
 				project.getProjectContent(),
 				project.getProjectLink(),
 				project.getProjectCreatedAt(),
@@ -85,30 +67,56 @@ public class ProjectService {
 				project.getProjectFinishedAt(),
 				project.getProjectStatus(),
 				project.getProjectTechStack(),
-				project.getProjectUserId()
-			))
-			.collect(Collectors.toList());
+				project.getProjectRecruitmentRoles(),
+				project.getProjectUserId(),
+				project.getProjectRegion()
+		);
+	}
+
+	public List<ProjectDTO> getAllProjects() {
+		logger.info("모든 프로젝트를 조회 중입니다.");
+		return projectRepository.findAll().stream()
+				.map(project -> new ProjectDTO(
+						project.getProjectId(),
+						project.getProjectTitle(),
+						project.getProjectSummary(),
+						project.getProjectContent(),
+						project.getProjectLink(),
+						project.getProjectCreatedAt(),
+						project.getProjectUpdatedAt(),
+						project.getProjectDeletedAt(),
+						project.getProjectFinishedAt(),
+						project.getProjectStatus(),
+						project.getProjectTechStack(),
+						project.getProjectRecruitmentRoles(),
+						project.getProjectUserId(),
+						project.getProjectRegion()
+				))
+				.collect(Collectors.toList());
 	}
 
 	// ID 기준 상세 조회
 	public ProjectDTO getProjectById(Integer projectId) throws Exception {
 		logger.info("ID: {}의 프로젝트를 조회 중입니다.", projectId);
 		Project project = projectRepository.findById(projectId)
-			.orElseThrow(() -> new ProjectNotFoundException("사이드 프로젝트 게시글을 찾을 수 없습니다. ID: " + projectId));
+				.orElseThrow(() -> new ProjectNotFoundException("사이드 프로젝트 게시글을 찾을 수 없습니다. ID: " + projectId));
 
 		logger.info("ID: {}의 프로젝트를 성공적으로 조회하였습니다.", projectId);
 		return new ProjectDTO(
-			project.getProjectId(),
-			project.getProjectTitle(),
-			project.getProjectContent(),
-			project.getProjectLink(),
-			project.getProjectCreatedAt(),
-			project.getProjectUpdatedAt(),
-			project.getProjectDeletedAt(),
-			project.getProjectFinishedAt(),
-			project.getProjectStatus(),
-			project.getProjectTechStack(),
-			project.getProjectUserId()
+				project.getProjectId(),
+				project.getProjectTitle(),
+				project.getProjectSummary(),
+				project.getProjectContent(),
+				project.getProjectLink(),
+				project.getProjectCreatedAt(),
+				project.getProjectUpdatedAt(),
+				project.getProjectDeletedAt(),
+				project.getProjectFinishedAt(),
+				project.getProjectStatus(),
+				project.getProjectTechStack(),
+				project.getProjectRecruitmentRoles(),
+				project.getProjectUserId(),
+				project.getProjectRegion()
 		);
 	}
 
@@ -119,12 +127,14 @@ public class ProjectService {
 		validateProjectDTO(projectDTO);
 
 		Project project = projectRepository.findById(projectId)
-			.orElseThrow(() -> new ProjectNotFoundException("사이드 프로젝트 게시글을 찾을 수 없습니다. ID: " + projectId));
+				.orElseThrow(() -> new ProjectNotFoundException("사이드 프로젝트 게시글을 찾을 수 없습니다. ID: " + projectId));
 
 		project.setProjectTitle(projectDTO.getProjectTitle());
 		project.setProjectContent(projectDTO.getProjectContent());
 		project.setProjectLink(projectDTO.getProjectLink());
 		project.setProjectTechStack(projectDTO.getProjectTechStack());
+		project.setProjectRecruitmentRoles(projectDTO.getProjectRecruitmentRoles());
+		project.setProjectRegion(projectDTO.getProjectRegion());
 		project.setProjectStatus(PostStatus.DEFAULT);
 		project.setProjectUserId(projectDTO.getProjectUserId());
 
@@ -132,17 +142,20 @@ public class ProjectService {
 		logger.info("ID: {}의 프로젝트가 성공적으로 수정되었습니다.", projectId);
 
 		return new ProjectDTO(
-			project.getProjectId(),
-			project.getProjectTitle(),
-			project.getProjectContent(),
-			project.getProjectLink(),
-			project.getProjectCreatedAt(),
-			project.getProjectUpdatedAt(),
-			project.getProjectDeletedAt(),
-			project.getProjectFinishedAt(),
-			project.getProjectStatus(),
-			project.getProjectTechStack(),
-			project.getProjectUserId()
+				project.getProjectId(),
+				project.getProjectTitle(),
+				project.getProjectSummary(),
+				project.getProjectContent(),
+				project.getProjectLink(),
+				project.getProjectCreatedAt(),
+				project.getProjectUpdatedAt(),
+				project.getProjectDeletedAt(),
+				project.getProjectFinishedAt(),
+				project.getProjectStatus(),
+				project.getProjectTechStack(),
+				project.getProjectRecruitmentRoles(),
+				project.getProjectUserId(),
+				project.getProjectRegion()
 		);
 	}
 
