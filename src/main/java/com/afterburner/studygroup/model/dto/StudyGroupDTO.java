@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.afterburner.common.enums.PostStatus;
-import com.afterburner.studygroup.model.entity.StudyGroupCategory;
+import com.afterburner.studygroup.model.entity.StudyRole;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -18,7 +18,7 @@ import lombok.*;
 public class StudyGroupDTO {
 
 	private Integer studyGroupId;
-	private StudyGroupCategory studyGroupCategory;
+	private List<String> studyGroupCategory;
 	private String studyGroupTitle;
 
 	// 한줄 소개
@@ -42,5 +42,7 @@ public class StudyGroupDTO {
 
 	private Integer studyGroupUserId;
 
+	@Enumerated(EnumType.STRING)
+	private StudyRole studyGroupRole;
 
 }

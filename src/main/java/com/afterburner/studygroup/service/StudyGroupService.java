@@ -3,6 +3,7 @@ package com.afterburner.studygroup.service;
 import com.afterburner.common.enums.PostStatus;
 import com.afterburner.studygroup.model.dto.StudyGroupDTO;
 import com.afterburner.studygroup.model.entity.StudyGroupEntity;
+import com.afterburner.studygroup.model.entity.StudyRole;
 import com.afterburner.studygroup.repository.StudyGroupRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -34,6 +35,8 @@ public class StudyGroupService {
 		dto.setStudyGroupUpdatedAt(entity.getStudyGroupUpdatedAt());
 		dto.setStudyGroupStatus(entity.getStudyGroupStatus());
 		dto.setStudyGroupUserId(entity.getStudyGroupUserId());
+		dto.setStudyGroupRole(entity.getStudyGroupRole());
+		dto.setStudyGroupMembers(entity.getStudyGroupMembers());
 		return dto;
 	}
 
@@ -42,13 +45,22 @@ public class StudyGroupService {
 		// String currentUserId = ... ;
 		// studyGroupDTO.setStudyGroupUserId(currentUserId);
 
+		List<String> members = studyGroupDTO.getStudyGroupMembers();
+		if (members != null) {
+			members = members.stream()
+			.filter(m -> !m.equals(String.valueOf(studyGroupDTO.getStudyGroupUserId())))
+			.collect(Collectors.toList());
+		}
+
 		StudyGroupEntity entity = StudyGroupEntity.builder()
-		.studyGroupCategory(studyGroupDTO.getStudyGroupCategory())
-		.studyGroupTitle(studyGroupDTO.getStudyGroupTitle())
-		.studyGroupContent(studyGroupDTO.getStudyGroupContent())
-		.studyGroupStatus(studyGroupDTO.getStudyGroupStatus())
-		.studyGroupUserId(studyGroupDTO.getStudyGroupUserId())
-		.build();
+						.studyGroupCategory(studyGroupDTO.getStudyGroupCategory())
+						.studyGroupTitle(studyGroupDTO.getStudyGroupTitle())
+						.studyGroupContent(studyGroupDTO.getStudyGroupContent())
+						.studyGroupStatus(studyGroupDTO.getStudyGroupStatus())
+						.studyGroupUserId(studyGroupDTO.getStudyGroupUserId())
+						.studyGroupRole(StudyRole.LEADER)
+						.studyGroupMembers(members)
+						.build();
 
 		StudyGroupEntity savedEntity = studyGroupRepository.save(entity);
 		return toDto(savedEntity);
@@ -79,14 +91,14 @@ public class StudyGroupService {
 
 	@Transactional
 	public void deletePost(Integer id) {
-		String currentUserId = "testUser"; // 예시: 현재 로그인한 사용자 ID
+//		String currentUserId = "testUser";
 
 		StudyGroupEntity entity = studyGroupRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다. id: " + id));
 
-		if (!entity.getStudyGroupUserId().equals(currentUserId)) {
-			throw new SecurityException("게시글을 삭제할 권한이 없습니다.");
-		}
+//		if (!entity.getStudyGroupUserId().equals(currentUserId)) {
+//			throw new SecurityException("게시글을 삭제할 권한이 없습니다.");
+//		}
 
 		// 실제 데이터를 삭제하는 대신, 상태를 'DELETED'로 변경 (Soft Delete)
 		entity.setStudyGroupStatus(PostStatus.DELETED);

@@ -1,6 +1,11 @@
 package com.afterburner.studygroup.model.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import org.hibernate.annotations.Type;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import com.afterburner.studygroup.model.entity.StudyRole;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -31,7 +36,7 @@ public class StudyGroupEntity {
 	private Integer studyGroupId;
 
 	@Column(name = "studygroup_category", nullable = false)
-	private StudyGroupCategory studyGroupCategory;
+	private List<String> studyGroupCategory;
 
 	@Column(name = "studygroup_title", nullable = false, columnDefinition = "VARCHAR(30)")
 	private String studyGroupTitle;
@@ -50,10 +55,18 @@ public class StudyGroupEntity {
 	private LocalDateTime studyGroupDeletedAt;
 
 	@Column(name = "studygroup_status", nullable = false) // 기본값, 삭제상태, 신고된 상태
-	private PostStatus studyGroupStatus;
+        private PostStatus studyGroupStatus;
 
-	@Column(name = "studygroup_user_id", nullable = false) // 작성자 ID
-	private Integer studyGroupUserId;
+        @Column(name = "studygroup_user_id", nullable = false) // 작성자 ID
+        private Integer studyGroupUserId;
+
+        @Column(name = "studygroup_role", nullable = false)
+        @Enumerated(EnumType.STRING)
+        private StudyRole studyGroupRole;
+
+        @Column(name = "studygroup_members", columnDefinition = "jsonb")
+        @Type(JsonBinaryType.class)
+        private List<String> studyGroupMembers;
 
 
 	@PrePersist // 엔티티에 처음 저장될 때에만 동작함
