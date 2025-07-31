@@ -29,15 +29,16 @@ public class StudyGroupController {
 		return ResponseEntity.status(SuccessCode.INSERT.getStatus()).body(createdDTO);
 	}
 
-	//	수정
+	// 수정
+	// 게시글 등록한 유저만 수정 가능
 	@PutMapping("/{id}")
 	public ResponseEntity<StudyGroupDTO> updateStudyGroup(@PathVariable("id") Integer id, @Valid @RequestBody StudyGroupDTO studyGroupDTO) {
-
 		StudyGroupDTO updatedDTO = studyGroupService.updatePost(studyGroupDTO, id);
-		return ResponseEntity.status(SuccessCode.UPDATE.getStatus()).body(updatedDTO); // UPDATE 성공 코드로 변경
+		return ResponseEntity.status(SuccessCode.UPDATE.getStatus()).body(updatedDTO);
 	}
 
 	// 삭제
+	// 게시글 등록한 유저와 관리자만 삭제 가능
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteStudyGroup(@PathVariable("id") Integer id) {
 		studyGroupService.deletePost(id);

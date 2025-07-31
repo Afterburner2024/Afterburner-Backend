@@ -36,7 +36,7 @@ public class StudyGroupMemberEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "study_member_status", nullable = false)
-    private StudyMemberStatus studyMemberStatus = StudyMemberStatus.PENDING;
+    private StudyMemberStatus studyMemberStatus;
 
     @CreationTimestamp
     @Column(name = "study_member_joined_at", nullable = false)

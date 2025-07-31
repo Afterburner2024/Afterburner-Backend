@@ -1,30 +1,30 @@
 package com.afterburner.studygroup.service;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.afterburner.common.codes.ErrorCode;
+import com.afterburner.global.exception.StudyGroupApplicationException;
 import com.afterburner.global.exception.TeamMemberNotFoundException;
 import com.afterburner.studygroup.model.StudyMemberStatus;
 import com.afterburner.studygroup.model.dto.StudyGroupMemberDTO;
+import com.afterburner.studygroup.model.entity.StudyGroupEntity;
 import com.afterburner.studygroup.model.entity.StudyGroupMemberEntity;
 import com.afterburner.studygroup.repository.StudyGroupMemberRepository;
+import com.afterburner.studygroup.repository.StudyGroupRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class StudyGroupMemberService {
 
     private final StudyGroupMemberRepository studyGroupMemberRepository;
-
-    @Autowired
-    public StudyGroupMemberService(StudyGroupMemberRepository studyGroupMemberRepository) {
-        this.studyGroupMemberRepository = studyGroupMemberRepository;
-    }
+    private final StudyGroupRepository studyGroupRepository;
 
     private StudyGroupMemberDTO toDto(StudyGroupMemberEntity entity) {
         return StudyGroupMemberDTO.builder()
@@ -38,11 +38,24 @@ public class StudyGroupMemberService {
                 .build();
     }
 
+    // 멤버 참가
+    // 한번 거절당했던 유저는 신청 금지
     @Transactional
-    public StudyGroupMemberDTO joinStudyGroup(Integer groupId, StudyGroupMemberDTO dto) {
+    public StudyGroupMemberDTO joinStudyGroup(Integer groupId, Integer userId, StudyGroupMemberDTO dto) {
+        studyGroupMemberRepository.findByStudyGroupIdAndStudyMemberUserId(groupId, userId)
+                .ifPresent(member -> {
+                    if (member.getStudyMemberStatus() == StudyMemberStatus.REJECTED) {
+                        throw new StudyGroupApplicationException(ErrorCode.REJECTED_APPLICATION);
+                    }
+                    if (member.getStudyMemberStatus() == StudyMemberStatus.PENDING ||
+                            member.getStudyMemberStatus() == StudyMemberStatus.APPROVED) {
+                        throw new StudyGroupApplicationException(ErrorCode.ALREADY_APPLIED);
+                    }
+                });
+
         StudyGroupMemberEntity entity = StudyGroupMemberEntity.builder()
                 .studyGroupId(groupId)
-                .studyMemberUserId(dto.getStudyMemberUserId())
+                .studyMemberUserId(userId)
                 .studyMemberRole(dto.getStudyMemberRole())
                 .studyMemberStatus(StudyMemberStatus.PENDING)
                 .build();
@@ -50,8 +63,16 @@ public class StudyGroupMemberService {
         return toDto(saved);
     }
 
+    // 멤버 승인 (리더만 가능)
     @Transactional
-    public StudyGroupMemberDTO approveMember(Integer groupId, Integer memberId) {
+    public StudyGroupMemberDTO approveMember(Integer groupId, Integer memberId, Integer currentUserId) {
+        StudyGroupEntity studyGroup = studyGroupRepository.findById(groupId)
+                .orElseThrow(() -> new TeamMemberNotFoundException(ErrorCode.NOT_FOUND));
+
+        if (!Objects.equals(studyGroup.getStudyGroupUserId(), currentUserId)) {
+            throw new StudyGroupApplicationException(ErrorCode.NOT_STUDY_GROUP_LEADER);
+        }
+
         StudyGroupMemberEntity entity = studyGroupMemberRepository
                 .findByStudyMemberIdAndStudyGroupId(memberId, groupId)
                 .orElseThrow(() -> new TeamMemberNotFoundException(ErrorCode.TEAM_MEMBER_NOT_FOUND));
@@ -60,8 +81,16 @@ public class StudyGroupMemberService {
         return toDto(entity);
     }
 
+    // 멤버 거절(리더)
     @Transactional
-    public StudyGroupMemberDTO rejectMember(Integer groupId, Integer memberId) {
+    public StudyGroupMemberDTO rejectMember(Integer groupId, Integer memberId, Integer currentUserId) {
+        StudyGroupEntity studyGroup = studyGroupRepository.findById(groupId)
+                .orElseThrow(() -> new TeamMemberNotFoundException(ErrorCode.NOT_FOUND));
+
+        if (!Objects.equals(studyGroup.getStudyGroupUserId(), currentUserId)) {
+            throw new StudyGroupApplicationException(ErrorCode.NOT_STUDY_GROUP_LEADER);
+        }
+
         StudyGroupMemberEntity entity = studyGroupMemberRepository
                 .findByStudyMemberIdAndStudyGroupId(memberId, groupId)
                 .orElseThrow(() -> new TeamMemberNotFoundException(ErrorCode.TEAM_MEMBER_NOT_FOUND));
@@ -70,6 +99,7 @@ public class StudyGroupMemberService {
         return toDto(entity);
     }
 
+    // 멤버 조회
     public List<StudyGroupMemberDTO> getMembers(Integer groupId) {
         List<StudyMemberStatus> statuses = Arrays.asList(StudyMemberStatus.APPROVED, StudyMemberStatus.PENDING);
         return studyGroupMemberRepository
@@ -79,14 +109,25 @@ public class StudyGroupMemberService {
                 .collect(Collectors.toList());
     }
 
+    // 멤버 등록 취소 및 삭제
     @Transactional
-    public boolean deleteMember(Integer groupId, Integer memberId) {
-        StudyGroupMemberEntity entity = studyGroupMemberRepository
-                .findByStudyMemberIdAndStudyGroupId(memberId, groupId)
+    public boolean deleteMember(Integer groupId, Integer memberId, Integer currentUserId) {
+        StudyGroupEntity studyGroup = studyGroupRepository.findById(groupId)
+                .orElseThrow(() -> new TeamMemberNotFoundException(ErrorCode.NOT_FOUND));
+
+        StudyGroupMemberEntity member = studyGroupMemberRepository.findById(memberId)
                 .orElseThrow(() -> new TeamMemberNotFoundException(ErrorCode.TEAM_MEMBER_NOT_FOUND));
-        entity.setStudyMemberStatus(StudyMemberStatus.DELETED);
-        entity.setStudyMemberDeletedAt(LocalDateTime.now());
-        studyGroupMemberRepository.save(entity);
+
+        boolean isLeader = Objects.equals(studyGroup.getStudyGroupUserId(), currentUserId);
+        boolean isSelf = Objects.equals(member.getStudyMemberUserId(), currentUserId);
+
+        if (!isLeader && !isSelf) {
+            throw new StudyGroupApplicationException(ErrorCode.FORBIDDEN);
+        }
+
+        member.setStudyMemberStatus(StudyMemberStatus.DELETED);
+        member.setStudyMemberDeletedAt(LocalDateTime.now());
+        studyGroupMemberRepository.save(member);
         return true;
     }
 }

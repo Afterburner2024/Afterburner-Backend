@@ -7,4 +7,5 @@ import com.afterburner.studygroup.model.entity.StudyGroupEntity;
 
 @Repository
 public interface StudyGroupRepository extends JpaRepository<StudyGroupEntity, Integer> {
+    java.util.List<StudyGroupEntity> findByStudyGroupUserId(Integer studyGroupUserId);
 }

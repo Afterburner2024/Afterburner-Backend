@@ -54,19 +54,22 @@ public class StudyGroupEntity {
 	@Column(name = "studygroup_deleted_at")
 	private LocalDateTime studyGroupDeletedAt;
 
+	@Column(name = "studygroup_finished_at")
+	private LocalDateTime StudyGroupFinishedAt;
+
 	@Column(name = "studygroup_status", nullable = false) // 기본값, 삭제상태, 신고된 상태
         private PostStatus studyGroupStatus;
 
-        @Column(name = "studygroup_user_id", nullable = false) // 작성자 ID
-        private Integer studyGroupUserId;
+	@Column(name = "studygroup_user_id", nullable = false) // 작성자 ID
+	private Integer studyGroupUserId;
 
-        @Column(name = "studygroup_role", nullable = false)
-        @Enumerated(EnumType.STRING)
-        private StudyRole studyGroupRole;
+	@Column(name = "studygroup_role", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private StudyRole studyGroupRole;
 
-        @Column(name = "studygroup_members", columnDefinition = "jsonb")
-        @Type(JsonBinaryType.class)
-        private List<String> studyGroupMembers;
+	@Column(name = "studygroup_members", columnDefinition = "jsonb")
+	@Type(JsonBinaryType.class)
+	private List<String> studyGroupMembers;
 
 
 	@PrePersist // 엔티티에 처음 저장될 때에만 동작함

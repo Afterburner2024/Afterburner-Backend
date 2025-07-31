@@ -40,7 +40,10 @@ public class StudyGroupDTO {
 
 	private List<String> studyGroupMembers;
 
-	private Integer studyGroupUserId;
+        private Integer studyGroupUserId;
+
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private String studyGroupUserName;
 
 	@Enumerated(EnumType.STRING)
 	private StudyRole studyGroupRole;

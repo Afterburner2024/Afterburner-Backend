@@ -47,6 +47,10 @@ public class User {
 
     private String userImage; // 사용자 프로필 이미지 URL 또는 경로
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserGrade userGrade; // 사용자 등급
+
     public void delete() {
         this.deletedAt = LocalDateTime.now();
     }

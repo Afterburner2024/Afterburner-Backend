@@ -55,8 +55,11 @@ public class ProjectDTO {
 
 	private List<String> projectRecruitmentRoles;
 
-	@NotNull(message = "사용자 ID는 필수입니다.")
-	private Integer projectUserId;
+        @NotNull(message = "사용자 ID는 필수입니다.")
+        private Integer projectUserId;
+
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private String projectUserName;
 
 	private String projectRegion;
 

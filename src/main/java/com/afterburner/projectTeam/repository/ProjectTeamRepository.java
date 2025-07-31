@@ -16,5 +16,7 @@ public interface ProjectTeamRepository extends JpaRepository<ProjectTeam, Intege
 	Optional<ProjectTeam> findByProjectTeamIdAndProjectTeamUserId(Integer projectId, Integer userId);
 
 	// 팀원 신청 상태(신청중, 합격, 불합격)에 따라 팀원 조회
-	List<ProjectTeam> findByProjectTeamPostIdAndProjectTeamMemberIn(Integer projectId, List<String> statuses);
+        List<ProjectTeam> findByProjectTeamPostIdAndProjectTeamMemberIn(Integer projectId, List<String> statuses);
+
+        List<ProjectTeam> findByProjectTeamUserId(Integer projectTeamUserId);
 }

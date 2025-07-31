@@ -13,4 +13,8 @@ public interface StudyGroupMemberRepository extends JpaRepository<StudyGroupMemb
     List<StudyGroupMemberEntity> findByStudyGroupIdAndStudyMemberStatusIn(Integer studyGroupId, List<StudyMemberStatus> statuses);
 
     Optional<StudyGroupMemberEntity> findByStudyMemberIdAndStudyGroupId(Integer studyMemberId, Integer studyGroupId);
+
+    Optional<StudyGroupMemberEntity> findByStudyGroupIdAndStudyMemberUserId(Integer studyGroupId, Integer studyMemberUserId);
+
+    List<StudyGroupMemberEntity> findByStudyMemberUserId(Integer studyMemberUserId);
 }
