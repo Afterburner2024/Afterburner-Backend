@@ -51,17 +51,12 @@ public class QnaController {
     public ResponseEntity<?> getAllQnas() {
         List<QnaDTO> qnas = qnaService.getAllQnas();
 
-        if (qnas != null && !qnas.isEmpty()) {
-            ApiResponse<List<QnaDTO>> response = ApiResponse.<List<QnaDTO>>builder()
-                    .statusCode(SuccessCode.SELECT.getStatus())
-                    .message(SuccessCode.SELECT.getMessage())
-                    .result(qnas)
-                    .build();
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
-                    .body(ErrorCode.NOT_FOUND_ERROR.getMessage());
-        }
+        ApiResponse<List<QnaDTO>> response = ApiResponse.<List<QnaDTO>>builder()
+                .statusCode(SuccessCode.SELECT.getStatus())
+                .message(SuccessCode.SELECT.getMessage())
+                .result(qnas)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     // 상세 조회

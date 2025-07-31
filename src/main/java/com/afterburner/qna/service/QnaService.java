@@ -4,6 +4,8 @@ import com.afterburner.common.enums.PostStatus;
 import com.afterburner.qna.model.dto.QnaDTO;
 import com.afterburner.qna.model.entity.QnaEntity;
 import com.afterburner.qna.repository.QnaRepository;
+import com.afterburner.global.exception.QnaNotFoundException;
+import com.afterburner.common.codes.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,10 +72,10 @@ public class QnaService {
 
     public QnaDTO getQnaById(Integer qnaId) {
         QnaEntity qna = qnaRepository.findById(qnaId)
-                .orElseThrow(() -> new RuntimeException("QnA를 찾을 수 없습니다."));
+                .orElseThrow(() -> new QnaNotFoundException(ErrorCode.NOT_FOUND_ERROR, "QnA를 찾을 수 없습니다."));
 
         if (qna.getQnaStatus() != PostStatus.DEFAULT) {
-            throw new RuntimeException("이미 삭제된 QNA입니다..");
+            throw new QnaNotFoundException(ErrorCode.NOT_FOUND_ERROR, "이미 삭제된 QNA입니다..");
         }
 
         return QnaDTO.builder()
@@ -91,7 +93,7 @@ public class QnaService {
     @Transactional
     public QnaDTO updateQna(Integer qnaId, QnaDTO qnaDTO) {
         QnaEntity qna = qnaRepository.findById(qnaId)
-                .orElseThrow(() -> new RuntimeException("해당 QnA를 찾을 수 없습니다."));
+                .orElseThrow(() -> new QnaNotFoundException(ErrorCode.NOT_FOUND_ERROR, "해당 QnA를 찾을 수 없습니다."));
 
         // 로그인 코드 완성되면
         // if (!qna.getUserId().equals(getCurrentUserId())) {
@@ -120,7 +122,7 @@ public class QnaService {
     @Transactional
     public QnaDTO deleteQna(Integer qnaId) {
         QnaEntity qna = qnaRepository.findById(qnaId)
-                .orElseThrow(() -> new RuntimeException("QnA를 찾을 수 없습니다."));
+                .orElseThrow(() -> new QnaNotFoundException(ErrorCode.NOT_FOUND_ERROR, "QnA를 찾을 수 없습니다."));
 
         // if (!qna.getUserId().equals(getCurrentUserId()) && !isCurrentUserAdmin()) {
         //     throw new RuntimeException("You are not authorized to delete this QnA.");
@@ -146,7 +148,7 @@ public class QnaService {
     @Transactional
     public QnaDTO addAnswer(Integer qnaId, QnaDTO qnaDTO) {
         QnaEntity qna = qnaRepository.findById(qnaId)
-                .orElseThrow(() -> new RuntimeException("해당 QnA를 찾을 수 없습니다."));
+                .orElseThrow(() -> new QnaNotFoundException(ErrorCode.NOT_FOUND_ERROR, "해당 QnA를 찾을 수 없습니다."));
 
         qna.setQnaAnswer(qnaDTO.getQnaAnswer());
         qna.setQnaUpdatedAt(LocalDateTime.now());

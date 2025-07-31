@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.annotations.Type;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import com.afterburner.studygroup.model.entity.StudyRole;
+import jakarta.persistence.Convert;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -35,8 +36,9 @@ public class StudyGroupEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer studyGroupId;
 
-	@Column(name = "studygroup_category", nullable = false)
-	private List<String> studyGroupCategory;
+        @Column(name = "studygroup_category", nullable = false, columnDefinition = "TEXT")
+        @Convert(converter = com.afterburner.common.converter.StringListConverter.class)
+        private List<String> studyGroupCategory;
 
 	@Column(name = "studygroup_title", nullable = false, columnDefinition = "VARCHAR(30)")
 	private String studyGroupTitle;
@@ -67,9 +69,9 @@ public class StudyGroupEntity {
 	@Enumerated(EnumType.STRING)
 	private StudyRole studyGroupRole;
 
-	@Column(name = "studygroup_members", columnDefinition = "jsonb")
-	@Type(JsonBinaryType.class)
-	private List<String> studyGroupMembers;
+        @Column(name = "studygroup_members", columnDefinition = "TEXT")
+        @Convert(converter = com.afterburner.common.converter.StringListConverter.class)
+        private List<String> studyGroupMembers;
 
 
 	@PrePersist // 엔티티에 처음 저장될 때에만 동작함

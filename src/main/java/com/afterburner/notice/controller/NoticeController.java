@@ -55,21 +55,16 @@ public class NoticeController {
 
 	// 전체 공지사항 조회
 	@GetMapping
-	public ResponseEntity<?> getAllNotices() {
-		List<NoticeDTO> notices = noticeService.getAllNotices();
+        public ResponseEntity<?> getAllNotices() {
+                List<NoticeDTO> notices = noticeService.getAllNotices();
 
-                if (notices != null && !notices.isEmpty()) {
-                        ApiResponse<List<NoticeDTO>> response = ApiResponse.<List<NoticeDTO>>builder()
+                ApiResponse<List<NoticeDTO>> response = ApiResponse.<List<NoticeDTO>>builder()
                                 .statusCode(SuccessCode.SELECT.getStatus())
-				.message(SuccessCode.SELECT.getMessage())
-				.result(notices)
-				.build();
-			return ResponseEntity.ok(response);
-		} else {
-			return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
-				.body(ErrorCode.NOT_FOUND_ERROR.getMessage());
-		}
-	}
+                                .message(SuccessCode.SELECT.getMessage())
+                                .result(notices)
+                                .build();
+                return ResponseEntity.ok(response);
+        }
 
 	// 특정 공지사항 상세 조회
 	@GetMapping("/{id}")

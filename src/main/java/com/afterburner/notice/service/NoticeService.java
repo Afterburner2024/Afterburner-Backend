@@ -11,6 +11,8 @@ import com.afterburner.common.enums.PostStatus;
 import com.afterburner.notice.model.Notice;
 import com.afterburner.notice.model.NoticeDTO;
 import com.afterburner.notice.repository.NoticeRepository;
+import com.afterburner.global.exception.NoticeNotFoundException;
+import com.afterburner.common.codes.ErrorCode;
 
 @Service
 public class NoticeService {
@@ -64,13 +66,13 @@ public class NoticeService {
 	}
 
 	// 특정 공지사항 상세 조회
-	public NoticeDTO getNoticeById(Integer noticeId) {
-		Notice notice = noticeRepository.findById(noticeId)
-			.orElseThrow(() -> new RuntimeException("공지사항을 찾을 수 없습니다."));
+        public NoticeDTO getNoticeById(Integer noticeId) {
+                Notice notice = noticeRepository.findById(noticeId)
+                        .orElseThrow(() -> new NoticeNotFoundException(ErrorCode.NOT_FOUND_ERROR, "공지사항을 찾을 수 없습니다."));
 
-		if (notice.getNoticeStatus() != PostStatus.DEFAULT) {
-			throw new RuntimeException("삭제된 공지사항입니다.");
-		}
+                if (notice.getNoticeStatus() != PostStatus.DEFAULT) {
+                        throw new NoticeNotFoundException(ErrorCode.NOT_FOUND_ERROR, "삭제된 공지사항입니다.");
+                }
 
 		return new NoticeDTO(
 			notice.getNoticeId(),
@@ -84,9 +86,9 @@ public class NoticeService {
 	}
 
 	// 공지사항 수정
-	public NoticeDTO updateNotice(Integer noticeId, NoticeDTO noticeDTO) {
-		Notice notice = noticeRepository.findById(noticeId)
-			.orElseThrow(() -> new RuntimeException("공지사항을 찾을 수 없습니다."));
+        public NoticeDTO updateNotice(Integer noticeId, NoticeDTO noticeDTO) {
+                Notice notice = noticeRepository.findById(noticeId)
+                        .orElseThrow(() -> new NoticeNotFoundException(ErrorCode.NOT_FOUND_ERROR, "공지사항을 찾을 수 없습니다."));
 
 		notice.setNoticeTitle(noticeDTO.getNoticeTitle());
 		notice.setNoticeContent(noticeDTO.getNoticeContent());
@@ -107,9 +109,9 @@ public class NoticeService {
 	}
 
 	// 공지사항 삭제
-	public NoticeDTO deleteNotice(Integer noticeId) {
-		Notice notice = noticeRepository.findById(noticeId)
-			.orElseThrow(() -> new RuntimeException("공지사항을 찾을 수 없습니다."));
+        public NoticeDTO deleteNotice(Integer noticeId) {
+                Notice notice = noticeRepository.findById(noticeId)
+                        .orElseThrow(() -> new NoticeNotFoundException(ErrorCode.NOT_FOUND_ERROR, "공지사항을 찾을 수 없습니다."));
 
 		// 공지사항 상태를 삭제된 상태로 변경
 		notice.setNoticeStatus(PostStatus.DELETED);
