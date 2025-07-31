@@ -34,7 +34,7 @@ public class QnaService {
         qna.setQnaCreatedAt(LocalDateTime.now());
         qna.setQnaUpdatedAt(LocalDateTime.now());
         qna.setQnaDeletedAt(null);
-        // qna.setUserId(getCurrentUserId());
+        qna.setQnaUserId(qnaDTO.getQnaUserId());
 
         QnaEntity savedQna = qnaRepository.save(qna);
 
@@ -44,6 +44,7 @@ public class QnaService {
                 .qnaContent(savedQna.getQnaContent())
                 .qnaAnswer(savedQna.getQnaAnswer())
                 .qnaStatus(savedQna.getQnaStatus())
+                .qnaUserId(savedQna.getQnaUserId())
                 .qnaCreatedAt(savedQna.getQnaCreatedAt())
                 .qnaUpdatedAt(savedQna.getQnaUpdatedAt())
                 .qnaDeletedAt(savedQna.getQnaDeletedAt())
@@ -63,6 +64,7 @@ public class QnaService {
                         .qnaContent(qna.getQnaContent())
                         .qnaAnswer(qna.getQnaAnswer())
                         .qnaStatus(qna.getQnaStatus())
+                        .qnaUserId(qna.getQnaUserId())
                         .qnaCreatedAt(qna.getQnaCreatedAt())
                         .qnaUpdatedAt(qna.getQnaUpdatedAt())
                         .qnaDeletedAt(qna.getQnaDeletedAt())
@@ -84,6 +86,7 @@ public class QnaService {
                 .qnaContent(qna.getQnaContent())
                 .qnaAnswer(qna.getQnaAnswer())
                 .qnaStatus(qna.getQnaStatus())
+                .qnaUserId(qna.getQnaUserId())
                 .qnaCreatedAt(qna.getQnaCreatedAt())
                 .qnaUpdatedAt(qna.getQnaUpdatedAt())
                 .qnaDeletedAt(qna.getQnaDeletedAt())
@@ -104,6 +107,7 @@ public class QnaService {
         qna.setQnaContent(qnaDTO.getQnaContent());
         qna.setQnaUpdatedAt(LocalDateTime.now());
         qna.setQnaStatus(PostStatus.DEFAULT);
+        qna.setQnaUserId(qnaDTO.getQnaUserId());
 
         QnaEntity updatedQna = qnaRepository.save(qna);
 
@@ -113,6 +117,7 @@ public class QnaService {
                 .qnaContent(updatedQna.getQnaContent())
                 .qnaAnswer(updatedQna.getQnaAnswer())
                 .qnaStatus(updatedQna.getQnaStatus())
+                .qnaUserId(updatedQna.getQnaUserId())
                 .qnaCreatedAt(updatedQna.getQnaCreatedAt())
                 .qnaUpdatedAt(updatedQna.getQnaUpdatedAt())
                 .qnaDeletedAt(updatedQna.getQnaDeletedAt())
@@ -139,6 +144,7 @@ public class QnaService {
                 .qnaContent(deletedQna.getQnaContent())
                 .qnaAnswer(deletedQna.getQnaAnswer())
                 .qnaStatus(deletedQna.getQnaStatus())
+                .qnaUserId(deletedQna.getQnaUserId())
                 .qnaCreatedAt(deletedQna.getQnaCreatedAt())
                 .qnaUpdatedAt(deletedQna.getQnaUpdatedAt())
                 .qnaDeletedAt(deletedQna.getQnaDeletedAt())
@@ -161,6 +167,7 @@ public class QnaService {
                 .qnaContent(answeredQna.getQnaContent())
                 .qnaAnswer(answeredQna.getQnaAnswer())
                 .qnaStatus(answeredQna.getQnaStatus())
+                .qnaUserId(answeredQna.getQnaUserId())
                 .qnaCreatedAt(answeredQna.getQnaCreatedAt())
                 .qnaUpdatedAt(answeredQna.getQnaUpdatedAt())
                 .qnaDeletedAt(answeredQna.getQnaDeletedAt())

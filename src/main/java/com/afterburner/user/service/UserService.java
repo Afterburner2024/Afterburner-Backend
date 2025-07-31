@@ -1,5 +1,8 @@
 package com.afterburner.user.service;
 
+import com.afterburner.qna.model.dto.QnaDTO;
+import com.afterburner.qna.model.entity.QnaEntity;
+import com.afterburner.qna.repository.QnaRepository;
 import com.afterburner.user.exception.UserEmailAlreadyExistsException;
 import com.afterburner.user.exception.UserNotFoundException;
 import com.afterburner.user.model.User;
@@ -33,6 +36,7 @@ public class UserService {
     private final ProjectTeamRepository projectTeamRepository;
     private final StudyGroupRepository studyGroupRepository;
     private final StudyGroupMemberRepository studyGroupMemberRepository;
+    private final QnaRepository qnaRepository;
 
     @Async
     @Transactional
@@ -209,5 +213,23 @@ public class UserService {
                 .studyGroupUserName(userRepository.findById(study.getStudyGroupUserId()).map(User::getUserName).orElse(null))
                 .studyGroupRole(study.getStudyGroupRole())
                 .build();
+    }
+
+    @Async
+    @Transactional(readOnly = true)
+    public CompletableFuture<List<QnaDTO>> getUserQuestions(Integer userId) {
+        List<QnaEntity> qnas = qnaRepository.findByQnaUserId(userId);
+        List<QnaDTO> dtos = qnas.stream()
+                .map(qna -> QnaDTO.builder()
+                        .qnaId(qna.getQnaId())
+                        .qnaTitle(qna.getQnaTitle())
+                        .qnaContent(qna.getQnaContent())
+                        .qnaCreatedAt(qna.getQnaCreatedAt())
+                        .qnaUpdatedAt(qna.getQnaUpdatedAt())
+                        .qnaDeletedAt(qna.getQnaDeletedAt())
+                        .qnaUserId(qna.getQnaUserId())
+                        .build())
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(dtos);
     }
 }

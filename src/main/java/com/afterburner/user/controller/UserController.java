@@ -1,6 +1,7 @@
 package com.afterburner.user.controller;
 
 import com.afterburner.common.response.ApiResponse;
+import com.afterburner.qna.model.dto.QnaDTO;
 import com.afterburner.user.model.UserDTO;
 import com.afterburner.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -70,5 +71,11 @@ public class UserController {
     public CompletableFuture<ResponseEntity<ApiResponse<List<com.afterburner.studygroup.model.dto.StudyGroupDTO>>>> getParticipatedStudies(@PathVariable Integer userId) {
         return userService.getUserParticipatedStudies(userId).thenApply(studies ->
                 ResponseEntity.ok(ApiResponse.success(studies)));
+    }
+
+    @GetMapping("/{userId}/questions")
+    public CompletableFuture<ResponseEntity<ApiResponse<List<QnaDTO>>>> getUserQuestions(@PathVariable Integer userId) {
+        return userService.getUserQuestions(userId).thenApply(questions ->
+                ResponseEntity.ok(ApiResponse.success(questions)));
     }
 }

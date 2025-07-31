@@ -35,6 +35,9 @@ public class QnaEntity {
     @Column(name = "qna_status", nullable = false)
     private PostStatus qnaStatus;
 
+    @Column(name = "qna_user_id", nullable = false)
+    private Integer qnaUserId;
+
     @Column(name = "qna_created_at", nullable = false)
     @CreationTimestamp
     private LocalDateTime qnaCreatedAt;
