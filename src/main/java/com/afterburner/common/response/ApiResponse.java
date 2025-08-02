@@ -24,6 +24,14 @@ public class ApiResponse<T> {
                 .build();
     }
 
+    public static <T> ApiResponse<T> error(int statusCode, String message) {
+    return new ApiResponse.Builder<T>()
+            .statusCode(statusCode)
+            .message(message)
+            .result(null)
+            .build();
+}
+
     public int getStatusCode() {
         return statusCode;
     }

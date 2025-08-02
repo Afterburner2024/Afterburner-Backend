@@ -14,11 +14,15 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    
 
     @Async
     @Transactional
@@ -82,5 +86,45 @@ public class UserService {
         user.delete();
         userRepository.save(user);
         return CompletableFuture.completedFuture(null);
+    }
+
+
+
+    // 파이어베이스 로그인
+    public UserDTO.UserResponse firebaseLoginOrRegister(String idToken) {
+        System.out.println("=== firebaseLoginOrRegister CALLED ===");
+        try {
+            // 1. 파이어베이스 토큰 검증 (이 줄에서 유효하지 않으면 Exception 발생)
+            System.out.println("idToken from client: " + idToken);
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            System.out.println("decodedToken: " + decodedToken);
+
+            // 2. 토큰에서 이메일, 이름, 프로필 사진 추출
+            String email = decodedToken.getEmail();
+            String name = (String) decodedToken.getClaims().getOrDefault("name", "사용자");
+            String picture = (String) decodedToken.getClaims().getOrDefault("picture", null);
+
+            // 3. DB에서 이메일로 유저 조회
+            User user = userRepository.findByUserEmail(email).orElse(null);
+
+            // 4. 없으면 신규 생성
+            if (user == null) {
+                user = new User();
+                user.setUserEmail(email);
+                user.setUserName(name);
+                user.setUserImage(picture);
+                // 필요한 필드 초기화 가능
+                user = userRepository.save(user);
+            }
+
+            // 5. UserResponse로 감싸서 반환
+            return new UserDTO.UserResponse(user);
+
+        } catch (Exception e) {
+            // 검증 실패(토큰 만료/위조/잘못된 토큰 등)
+            System.out.println("🔥🔥🔥 catch block entered!");
+            e.printStackTrace();
+            throw new RuntimeException("파이어베이스 토큰 검증 실패: " + e.getMessage(), e);
+        }
     }
 }
