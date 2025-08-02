@@ -9,6 +9,8 @@ import com.afterburner.user.model.User;
 import com.afterburner.user.model.UserDTO;
 import com.afterburner.user.model.UserGrade;
 import com.afterburner.user.repository.UserRepository;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
 import com.afterburner.project.model.Project;
 import com.afterburner.project.model.ProjectDTO;
 import com.afterburner.project.repository.ProjectRepository;
