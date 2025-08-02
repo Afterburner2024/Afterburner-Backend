@@ -35,6 +35,9 @@ public class QnaDTO {
     @NotNull(message = "공지상태는 필수입니다.")
     private PostStatus qnaStatus;
 
+    @NotNull(message = "유저 id는 필수입니다.")
+    private Integer qnaUserId;
+
     @NotNull
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDateTime qnaCreatedAt;

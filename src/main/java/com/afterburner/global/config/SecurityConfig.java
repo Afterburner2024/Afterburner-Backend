@@ -21,6 +21,9 @@ public class SecurityConfig {
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
 
+    @Value("${cors.allowed-flutter")
+    private String allowedFlutter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -55,7 +58,11 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedOriginPattern(allowedOrigins);
+<<<<<<< HEAD
         config.addAllowedOriginPattern("https://10.0.2.2:8080");
+=======
+        config.addAllowedOriginPattern(allowedFlutter);
+>>>>>>> 2ccbe6d1a33986ac1da8f46fe88acf1efa9060ba
         config.addAllowedOriginPattern("https://*.firebaseapp.com");
         config.addAllowedOriginPattern("https://*.googleapis.com");
         config.addAllowedHeader("Content-Type");

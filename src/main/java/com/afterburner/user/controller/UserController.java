@@ -1,6 +1,7 @@
 package com.afterburner.user.controller;
 
 import com.afterburner.common.response.ApiResponse;
+import com.afterburner.qna.model.dto.QnaDTO;
 import com.afterburner.user.model.UserDTO;
 import com.afterburner.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,7 @@ public class UserController {
                 ResponseEntity.noContent().build());
     }
 
+<<<<<<< HEAD
 
 
 
@@ -81,4 +83,35 @@ public class UserController {
     }
 
 
+=======
+    @GetMapping("/{userId}/projects")
+    public CompletableFuture<ResponseEntity<ApiResponse<List<com.afterburner.project.model.ProjectDTO>>>> getUserProjects(@PathVariable Integer userId) {
+        return userService.getUserProjects(userId).thenApply(projects ->
+                ResponseEntity.ok(ApiResponse.success(projects)));
+    }
+
+    @GetMapping("/{userId}/participated-projects")
+    public CompletableFuture<ResponseEntity<ApiResponse<List<com.afterburner.project.model.ProjectDTO>>>> getParticipatedProjects(@PathVariable Integer userId) {
+        return userService.getUserParticipatedProjects(userId).thenApply(projects ->
+                ResponseEntity.ok(ApiResponse.success(projects)));
+    }
+
+    @GetMapping("/{userId}/studies")
+    public CompletableFuture<ResponseEntity<ApiResponse<List<com.afterburner.studygroup.model.dto.StudyGroupDTO>>>> getUserStudies(@PathVariable Integer userId) {
+        return userService.getUserStudies(userId).thenApply(studies ->
+                ResponseEntity.ok(ApiResponse.success(studies)));
+    }
+
+    @GetMapping("/{userId}/participated-studies")
+    public CompletableFuture<ResponseEntity<ApiResponse<List<com.afterburner.studygroup.model.dto.StudyGroupDTO>>>> getParticipatedStudies(@PathVariable Integer userId) {
+        return userService.getUserParticipatedStudies(userId).thenApply(studies ->
+                ResponseEntity.ok(ApiResponse.success(studies)));
+    }
+
+    @GetMapping("/{userId}/questions")
+    public CompletableFuture<ResponseEntity<ApiResponse<List<QnaDTO>>>> getUserQuestions(@PathVariable Integer userId) {
+        return userService.getUserQuestions(userId).thenApply(questions ->
+                ResponseEntity.ok(ApiResponse.success(questions)));
+    }
+>>>>>>> 2ccbe6d1a33986ac1da8f46fe88acf1efa9060ba
 }

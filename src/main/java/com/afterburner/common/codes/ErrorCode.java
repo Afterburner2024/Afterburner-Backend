@@ -79,7 +79,13 @@ public enum ErrorCode {
 
     NOT_FOUND(404, "Not Found"),
     FORBIDDEN(405, "FORBIDDEN"),
-    INVALID_PARAMETER(400, "Invalid Parameter"); // End
+    INVALID_PARAMETER(400, "Invalid Parameter"), // End
+
+    // StudyGroup related errors
+    ALREADY_APPLIED(409, "Already applied to this study group"),
+    REJECTED_APPLICATION(403, "You have been rejected from this study group"),
+    NOT_STUDY_GROUP_LEADER(403, "You are not the leader of this study group"),
+    NOT_A_MEMBER(403, "You are not a member of this study group");
 
 
     private int status;

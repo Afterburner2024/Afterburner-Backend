@@ -1,10 +1,23 @@
 package com.afterburner.user.service;
 
+import com.afterburner.qna.model.dto.QnaDTO;
+import com.afterburner.qna.model.entity.QnaEntity;
+import com.afterburner.qna.repository.QnaRepository;
 import com.afterburner.user.exception.UserEmailAlreadyExistsException;
 import com.afterburner.user.exception.UserNotFoundException;
 import com.afterburner.user.model.User;
 import com.afterburner.user.model.UserDTO;
+import com.afterburner.user.model.UserGrade;
 import com.afterburner.user.repository.UserRepository;
+import com.afterburner.project.model.Project;
+import com.afterburner.project.model.ProjectDTO;
+import com.afterburner.project.repository.ProjectRepository;
+import com.afterburner.projectTeam.model.ProjectTeam;
+import com.afterburner.projectTeam.repository.ProjectTeamRepository;
+import com.afterburner.studygroup.model.dto.StudyGroupDTO;
+import com.afterburner.studygroup.model.entity.StudyGroupEntity;
+import com.afterburner.studygroup.repository.StudyGroupMemberRepository;
+import com.afterburner.studygroup.repository.StudyGroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -22,7 +35,15 @@ import com.google.firebase.auth.FirebaseToken;
 public class UserService {
 
     private final UserRepository userRepository;
+<<<<<<< HEAD
     
+=======
+    private final ProjectRepository projectRepository;
+    private final ProjectTeamRepository projectTeamRepository;
+    private final StudyGroupRepository studyGroupRepository;
+    private final StudyGroupMemberRepository studyGroupMemberRepository;
+    private final QnaRepository qnaRepository;
+>>>>>>> 2ccbe6d1a33986ac1da8f46fe88acf1efa9060ba
 
     @Async
     @Transactional
@@ -39,6 +60,7 @@ public class UserService {
         user.setNote(request.getNote());
         user.setUserTechStacks(request.getUserTechStacks());
         user.setUserImage(request.getUserImage());
+        user.setUserGrade(UserGrade.USER); // 기본 등급을 USER로 설정
 
         User savedUser = userRepository.save(user);
         return CompletableFuture.completedFuture(new UserDTO.UserResponse(savedUser));
@@ -88,6 +110,7 @@ public class UserService {
         return CompletableFuture.completedFuture(null);
     }
 
+<<<<<<< HEAD
 
 
     // 파이어베이스 로그인
@@ -126,5 +149,135 @@ public class UserService {
             e.printStackTrace();
             throw new RuntimeException("파이어베이스 토큰 검증 실패: " + e.getMessage(), e);
         }
+=======
+    @Async
+    @Transactional(readOnly = true)
+    public CompletableFuture<List<ProjectDTO>> getUserProjects(Integer userId) {
+        List<Project> projects = projectRepository.findByProjectUserId(userId);
+        List<ProjectDTO> dtos = projects.stream()
+                .map(project -> ProjectDTO.builder()
+                        .projectId(project.getProjectId())
+                        .projectTitle(project.getProjectTitle())
+                        .projectSummary(project.getProjectSummary())
+                        .projectContent(project.getProjectContent())
+                        .projectLink(project.getProjectLink())
+                        .projectCreatedAt(project.getProjectCreatedAt())
+                        .projectUpdatedAt(project.getProjectUpdatedAt())
+                        .projectDeletedAt(project.getProjectDeletedAt())
+                        .projectFinishedAt(project.getProjectFinishedAt())
+                        .projectStatus(project.getProjectStatus())
+                        .projectTechStack(project.getProjectTechStack())
+                        .projectRecruitmentRoles(project.getProjectRecruitmentRoles())
+                        .projectUserId(project.getProjectUserId())
+                        .projectUserName(userRepository.findById(project.getProjectUserId()).map(User::getUserName).orElse(null))
+                        .projectRegion(project.getProjectRegion())
+                        .build())
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(dtos);
+    }
+
+    @Async
+    @Transactional(readOnly = true)
+    public CompletableFuture<List<ProjectDTO>> getUserParticipatedProjects(Integer userId) {
+        List<ProjectTeam> teams = projectTeamRepository.findByProjectTeamUserId(userId);
+        List<ProjectDTO> dtos = teams.stream()
+                .map(team -> projectRepository.findById(team.getProjectTeamPostId()).orElse(null))
+                .filter(java.util.Objects::nonNull)
+                .map(this::mapProjectToDTO)
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(dtos);
+    }
+
+    private ProjectDTO mapProjectToDTO(Project p) {
+        return ProjectDTO.builder()
+                .projectId(p.getProjectId())
+                .projectTitle(p.getProjectTitle())
+                .projectSummary(p.getProjectSummary())
+                .projectContent(p.getProjectContent())
+                .projectLink(p.getProjectLink())
+                .projectCreatedAt(p.getProjectCreatedAt())
+                .projectUpdatedAt(p.getProjectUpdatedAt())
+                .projectDeletedAt(p.getProjectDeletedAt())
+                .projectFinishedAt(p.getProjectFinishedAt())
+                .projectStatus(p.getProjectStatus())
+                .projectTechStack(p.getProjectTechStack())
+                .projectRecruitmentRoles(p.getProjectRecruitmentRoles())
+                .projectUserId(p.getProjectUserId())
+                .projectUserName(userRepository.findById(p.getProjectUserId()).map(User::getUserName).orElse(null))
+                .projectRegion(p.getProjectRegion())
+                .build();
+    }
+
+    @Async
+    @Transactional(readOnly = true)
+    public CompletableFuture<List<StudyGroupDTO>> getUserStudies(Integer userId) {
+        List<StudyGroupEntity> studies = studyGroupRepository.findByStudyGroupUserId(userId);
+        List<StudyGroupDTO> dtos = studies.stream()
+                .map(study -> StudyGroupDTO.builder()
+                        .studyGroupId(study.getStudyGroupId())
+                        .studyGroupCategory(study.getStudyGroupCategory())
+                        .studyGroupTitle(study.getStudyGroupTitle())
+                        .studyGroupContent(study.getStudyGroupContent())
+                        .studyGroupCreatedAt(study.getStudyGroupCreatedAt())
+                        .studyGroupUpdatedAt(study.getStudyGroupUpdatedAt())
+                        .studyGroupDeletedAt(study.getStudyGroupDeletedAt())
+                        .studyGroupFinishedAt(study.getStudyGroupFinishedAt())
+                        .studyGroupStatus(study.getStudyGroupStatus())
+                        .studyGroupMembers(study.getStudyGroupMembers())
+                        .studyGroupUserId(study.getStudyGroupUserId())
+                        .studyGroupUserName(userRepository.findById(study.getStudyGroupUserId()).map(User::getUserName).orElse(null))
+                        .studyGroupRole(study.getStudyGroupRole())
+                        .build())
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(dtos);
+    }
+
+    @Async
+    @Transactional(readOnly = true)
+    public CompletableFuture<List<StudyGroupDTO>> getUserParticipatedStudies(Integer userId) {
+        List<com.afterburner.studygroup.model.entity.StudyGroupMemberEntity> members = studyGroupMemberRepository.findByStudyMemberUserId(userId);
+        List<StudyGroupDTO> dtos = members.stream()
+                .map(m -> studyGroupRepository.findById(m.getStudyGroupId()).orElse(null))
+                .filter(java.util.Objects::nonNull)
+                .map(this::mapStudyGroupToDTO)
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(dtos);
+    }
+
+    private StudyGroupDTO mapStudyGroupToDTO(StudyGroupEntity study) {
+        return StudyGroupDTO.builder()
+                .studyGroupId(study.getStudyGroupId())
+                .studyGroupCategory(study.getStudyGroupCategory())
+                .studyGroupTitle(study.getStudyGroupTitle())
+                .studyGroupContent(study.getStudyGroupContent())
+                .studyGroupCreatedAt(study.getStudyGroupCreatedAt())
+                .studyGroupUpdatedAt(study.getStudyGroupUpdatedAt())
+                .studyGroupDeletedAt(study.getStudyGroupDeletedAt())
+                .studyGroupFinishedAt(study.getStudyGroupFinishedAt())
+                .studyGroupStatus(study.getStudyGroupStatus())
+                .studyGroupMembers(study.getStudyGroupMembers())
+                .studyGroupUserId(study.getStudyGroupUserId())
+                .studyGroupUserName(userRepository.findById(study.getStudyGroupUserId()).map(User::getUserName).orElse(null))
+                .studyGroupRole(study.getStudyGroupRole())
+                .build();
+    }
+
+    @Async
+    @Transactional(readOnly = true)
+    public CompletableFuture<List<QnaDTO>> getUserQuestions(Integer userId) {
+        List<QnaEntity> qnas = qnaRepository.findByQnaUserId(userId);
+        List<QnaDTO> dtos = qnas.stream()
+                .map(qna -> QnaDTO.builder()
+                        .qnaId(qna.getQnaId())
+                        .qnaTitle(qna.getQnaTitle())
+                        .qnaContent(qna.getQnaContent())
+                        .qnaCreatedAt(qna.getQnaCreatedAt())
+                        .qnaUpdatedAt(qna.getQnaUpdatedAt())
+                        .qnaDeletedAt(qna.getQnaDeletedAt())
+                        .qnaUserId(qna.getQnaUserId())
+                        .build())
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(dtos);
+>>>>>>> 2ccbe6d1a33986ac1da8f46fe88acf1efa9060ba
     }
 }

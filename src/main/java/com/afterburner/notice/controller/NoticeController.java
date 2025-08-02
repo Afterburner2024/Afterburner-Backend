@@ -41,7 +41,7 @@ public class NoticeController {
 		NoticeDTO createdNotice = noticeService.createNotice(noticeDTO);
 
 		if (createdNotice != null) {
-			ApiResponse<NoticeDTO> response = new ApiResponse.Builder<NoticeDTO>()
+			ApiResponse<NoticeDTO> response = ApiResponse.<NoticeDTO>builder()
 				.statusCode(SuccessCode.INSERT.getStatus())
 				.message(SuccessCode.INSERT.getMessage())
 				.result(createdNotice)
@@ -55,21 +55,16 @@ public class NoticeController {
 
 	// 전체 공지사항 조회
 	@GetMapping
-	public ResponseEntity<?> getAllNotices() {
-		List<NoticeDTO> notices = noticeService.getAllNotices();
+        public ResponseEntity<?> getAllNotices() {
+                List<NoticeDTO> notices = noticeService.getAllNotices();
 
-		if (notices != null && !notices.isEmpty()) {
-			ApiResponse<List<NoticeDTO>> response = new ApiResponse.Builder<List<NoticeDTO>>()
-				.statusCode(SuccessCode.SELECT.getStatus())
-				.message(SuccessCode.SELECT.getMessage())
-				.result(notices)
-				.build();
-			return ResponseEntity.ok(response);
-		} else {
-			return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
-				.body(ErrorCode.NOT_FOUND_ERROR.getMessage());
-		}
-	}
+                ApiResponse<List<NoticeDTO>> response = ApiResponse.<List<NoticeDTO>>builder()
+                                .statusCode(SuccessCode.SELECT.getStatus())
+                                .message(SuccessCode.SELECT.getMessage())
+                                .result(notices)
+                                .build();
+                return ResponseEntity.ok(response);
+        }
 
 	// 특정 공지사항 상세 조회
 	@GetMapping("/{id}")
@@ -77,7 +72,7 @@ public class NoticeController {
 		NoticeDTO notice = noticeService.getNoticeById(noticeId);
 
 		if (notice != null) {
-			ApiResponse<NoticeDTO> response = new ApiResponse.Builder<NoticeDTO>()
+			ApiResponse<NoticeDTO> response = ApiResponse.<NoticeDTO>builder()
 				.statusCode(SuccessCode.SELECT.getStatus())
 				.message(SuccessCode.SELECT.getMessage())
 				.result(notice)
@@ -100,7 +95,7 @@ public class NoticeController {
 		NoticeDTO updatedNotice = noticeService.updateNotice(noticeId, noticeDTO);
 
 		if (updatedNotice != null) {
-			ApiResponse<NoticeDTO> response = new ApiResponse.Builder<NoticeDTO>()
+			ApiResponse<NoticeDTO> response = ApiResponse.<NoticeDTO>builder()
 				.statusCode(SuccessCode.UPDATE.getStatus())
 				.message(SuccessCode.UPDATE.getMessage())
 				.result(updatedNotice)
@@ -126,7 +121,7 @@ public class NoticeController {
 
 		// 삭제 성공 시
 		if (deletedNotice != null) {
-			ApiResponse<NoticeDTO> response = new ApiResponse.Builder<NoticeDTO>()
+			ApiResponse<NoticeDTO> response = ApiResponse.<NoticeDTO>builder()
 				.statusCode(SuccessCode.DELETE.getStatus())
 				.message(SuccessCode.DELETE.getMessage())
 				.result(deletedNotice)  // 삭제된 공지사항 정보를 응답으로 전달

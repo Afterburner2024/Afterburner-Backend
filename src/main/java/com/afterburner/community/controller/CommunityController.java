@@ -47,7 +47,7 @@ public class CommunityController {
 		Community createdPost = communityService.createPost(communityDTO);
 
 		if (createdPost != null) {
-			ApiResponse<Community> response = new ApiResponse.Builder<Community>()
+			ApiResponse<Community> response = ApiResponse.<Community>builder()
 				.statusCode(SuccessCode.INSERT.getStatus())
 				.message(SuccessCode.INSERT.getMessage())
 				.result(createdPost)
@@ -64,9 +64,9 @@ public class CommunityController {
 	public ResponseEntity<?> getAllCommunities() {
 		List<CommunityDTO> communities = communityService.getAllCommunities();
 
-		if (communities != null && !communities.isEmpty()) {
-			ApiResponse<List<CommunityDTO>> response = new ApiResponse.Builder<List<CommunityDTO>>()
-				.statusCode(SuccessCode.SELECT.getStatus())
+                if (communities != null && !communities.isEmpty()) {
+                        ApiResponse<List<CommunityDTO>> response = ApiResponse.<List<CommunityDTO>>builder()
+                                .statusCode(SuccessCode.SELECT.getStatus())
 				.message(SuccessCode.SELECT.getMessage())
 				.result(communities)
 				.build();
@@ -83,7 +83,7 @@ public class CommunityController {
 		CommunityDTO communityDTO = communityService.getCommunityById(communityId);
 
 		if (communityDTO != null) {
-			ApiResponse<CommunityDTO> response = new ApiResponse.Builder<CommunityDTO>()
+			ApiResponse<CommunityDTO> response = ApiResponse.<CommunityDTO>builder()
 				.statusCode(SuccessCode.SELECT.getStatus())
 				.message(SuccessCode.SELECT.getMessage())
 				.result(communityDTO)
@@ -102,7 +102,7 @@ public class CommunityController {
 		Community updatedPost = communityService.updatePost(communityId, communityDTO);
 
 		if (updatedPost != null) {
-			ApiResponse<Community> response = new ApiResponse.Builder<Community>()
+			ApiResponse<Community> response = ApiResponse.<Community>builder()
 				.statusCode(SuccessCode.UPDATE.getStatus())
 				.message(SuccessCode.UPDATE.getMessage())
 				.result(updatedPost)
@@ -128,7 +128,7 @@ public class CommunityController {
 
 		// 삭제 성공 시
 		if (deletedCommunity != null) {
-			ApiResponse<CommunityDTO> response = new ApiResponse.Builder<CommunityDTO>()
+			ApiResponse<CommunityDTO> response = ApiResponse.<CommunityDTO>builder()
 				.statusCode(SuccessCode.DELETE.getStatus())
 				.message(SuccessCode.DELETE.getMessage())
 				.result(deletedCommunity)  // 삭제된 게시글 정보를 응답으로 전달

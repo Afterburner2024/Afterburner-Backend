@@ -43,7 +43,7 @@ public class ProjectController {
 		if (projectDTO == null) {
 			logger.warn("요청 본문이 없습니다.");
 			return ResponseEntity.status(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus())
-				.body(new ApiResponse.Builder<ProjectDTO>()
+				.body(ApiResponse.<ProjectDTO>builder()
 					.statusCode(ErrorCode.REQUEST_BODY_MISSING_ERROR.getStatus())
 					.message(ErrorCode.REQUEST_BODY_MISSING_ERROR.getMessage())
 					.build());
@@ -54,7 +54,7 @@ public class ProjectController {
 
 		if (createdProject != null) {
 			logger.info("프로젝트가 성공적으로 생성되었습니다. ID: {}", createdProject.getProjectId());
-			ApiResponse<ProjectDTO> response = new ApiResponse.Builder<ProjectDTO>()
+			ApiResponse<ProjectDTO> response = ApiResponse.<ProjectDTO>builder()
 				.statusCode(SuccessCode.INSERT.getStatus())
 				.message(SuccessCode.INSERT.getMessage())
 				.result(createdProject)
@@ -63,7 +63,7 @@ public class ProjectController {
 		} else {
 			logger.error("프로젝트 생성에 실패했습니다.");
 			return ResponseEntity.status(ErrorCode.INSERT_ERROR.getStatus()) // 등록 실패 ㅠㅠ
-				.body(new ApiResponse.Builder<ProjectDTO>()
+				.body(ApiResponse.<ProjectDTO>builder()
 					.statusCode(ErrorCode.INSERT_ERROR.getStatus())
 					.message(ErrorCode.INSERT_ERROR.getMessage())
 					.build());
@@ -75,8 +75,8 @@ public class ProjectController {
 	public ResponseEntity<ApiResponse<List<ProjectDTO>>> getAllProjects() {
 		logger.info("모든 프로젝트를 조회 중입니다.");
 		List<ProjectDTO> projects = projectService.getAllProjects();
-		ApiResponse<List<ProjectDTO>> response = new ApiResponse.Builder<List<ProjectDTO>>()
-			.statusCode(SuccessCode.SELECT.getStatus())
+                ApiResponse<List<ProjectDTO>> response = ApiResponse.<List<ProjectDTO>>builder()
+                        .statusCode(SuccessCode.SELECT.getStatus())
 			.message(SuccessCode.SELECT.getMessage())
 			.result(projects)
 			.build();
@@ -92,12 +92,12 @@ public class ProjectController {
 		if (project == null) {
 			logger.warn("ID: {}의 프로젝트를 찾을 수 없습니다.", projectId);
 			return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
-				.body(new ApiResponse.Builder<ProjectDTO>()
+				.body(ApiResponse.<ProjectDTO>builder()
 					.statusCode(ErrorCode.NOT_FOUND_ERROR.getStatus())
 					.message(ErrorCode.NOT_FOUND_ERROR.getMessage())
 					.build());
 		}
-		ApiResponse<ProjectDTO> response = new ApiResponse.Builder<ProjectDTO>()
+		ApiResponse<ProjectDTO> response = ApiResponse.<ProjectDTO>builder()
 			.statusCode(SuccessCode.SELECT.getStatus())
 			.message(SuccessCode.SELECT.getMessage())
 			.result(project)
@@ -114,14 +114,14 @@ public class ProjectController {
 		if (projectService.getProjectById(projectId) == null) {
 			logger.warn("ID: {}의 프로젝트를 찾을 수 없어 수정할 수 없습니다.", projectId);
 			return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
-				.body(new ApiResponse.Builder<ProjectDTO>()
+				.body(ApiResponse.<ProjectDTO>builder()
 					.statusCode(ErrorCode.NOT_FOUND_ERROR.getStatus())
 					.message(ErrorCode.NOT_FOUND_ERROR.getMessage())
 					.build());
 		}
 		ProjectDTO updatedProject = projectService.updateProject(projectId, projectDTO);
 		logger.info("프로젝트가 성공적으로 수정되었습니다. ID: {}", updatedProject.getProjectId());
-		ApiResponse<ProjectDTO> response = new ApiResponse.Builder<ProjectDTO>()
+		ApiResponse<ProjectDTO> response = ApiResponse.<ProjectDTO>builder()
 			.statusCode(SuccessCode.UPDATE.getStatus())
 			.message(SuccessCode.UPDATE.getMessage())
 			.result(updatedProject)
@@ -136,14 +136,14 @@ public class ProjectController {
 		if (projectService.getProjectById(projectId) == null) {
 			logger.warn("ID: {}의 프로젝트를 찾을 수 없어 삭제할 수 없습니다.", projectId);
 			return ResponseEntity.status(ErrorCode.NOT_FOUND_ERROR.getStatus())
-				.body(new ApiResponse.Builder<Void>()
+				.body(ApiResponse.<Void>builder()
 					.statusCode(ErrorCode.NOT_FOUND_ERROR.getStatus())
 					.message(ErrorCode.NOT_FOUND_ERROR.getMessage())
 					.build());
 		}
 		projectService.deleteProject(projectId);
 		logger.info("ID: {}의 프로젝트가 성공적으로 삭제되었습니다.", projectId);
-		ApiResponse<Void> response = new ApiResponse.Builder<Void>()
+		ApiResponse<Void> response = ApiResponse.<Void>builder()
 			.statusCode(SuccessCode.DELETE.getStatus())
 			.message(SuccessCode.DELETE.getMessage())
 			.build();

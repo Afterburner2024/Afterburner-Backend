@@ -17,6 +17,7 @@ public class UserDTO {
         private String note;
         private List<String> userTechStacks;
         private String userImage;
+        private UserGrade userGrade;
     }
 
     @Getter
@@ -42,6 +43,7 @@ public class UserDTO {
         private String note;
         private List<String> userTechStacks;
         private String userImage;
+        private UserGrade userGrade;
 
         public UserResponse(User user) {
             this.userId = user.getUserId();
@@ -54,6 +56,7 @@ public class UserDTO {
             this.note = user.getNote();
             this.userTechStacks = user.getUserTechStacks();
             this.userImage = user.getUserImage();
+            this.userGrade = user.getUserGrade();
         }
     }
 }

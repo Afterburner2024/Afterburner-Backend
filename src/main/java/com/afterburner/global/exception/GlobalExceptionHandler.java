@@ -4,6 +4,8 @@ import com.afterburner.common.codes.ErrorCode;
 import com.afterburner.common.response.ErrorResponse;
 import com.afterburner.user.exception.UserEmailAlreadyExistsException;
 import com.afterburner.user.exception.UserNotFoundException;
+import com.afterburner.global.exception.NoticeNotFoundException;
+import com.afterburner.global.exception.QnaNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -52,6 +54,24 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(TeamMemberNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleTeamMemberNotFoundException(TeamMemberNotFoundException ex) {
+        ErrorResponse response = ErrorResponse.builder()
+                .statusCode(ex.getErrorCode().getStatus())
+                .message(ex.getMessage())
+                .build();
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @ExceptionHandler(NoticeNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoticeNotFoundException(NoticeNotFoundException ex) {
+        ErrorResponse response = ErrorResponse.builder()
+                .statusCode(ex.getErrorCode().getStatus())
+                .message(ex.getMessage())
+                .build();
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @ExceptionHandler(QnaNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleQnaNotFoundException(QnaNotFoundException ex) {
         ErrorResponse response = ErrorResponse.builder()
                 .statusCode(ex.getErrorCode().getStatus())
                 .message(ex.getMessage())

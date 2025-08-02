@@ -1,28 +1,30 @@
 package com.afterburner.common.response;
 
 import com.afterburner.common.codes.SuccessCode;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@Getter
+@Builder
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class ApiResponse<T> {
     private int statusCode;
     private String message;
     private T result;
 
-    public ApiResponse() {
-    }
-
-    public ApiResponse(Builder<T> builder) {
-        this.statusCode = builder.statusCode;
-        this.message = builder.message;
-        this.result = builder.result;
-    }
-
     public static <T> ApiResponse<T> success(T result) {
-        return new ApiResponse.Builder<T>()
+        return ApiResponse.<T>builder()
                 .statusCode(SuccessCode.SELECT.getStatus())
                 .message(SuccessCode.SELECT.getMessage())
                 .result(result)
                 .build();
     }
+<<<<<<< HEAD
 
     public static <T> ApiResponse<T> error(int statusCode, String message) {
     return new ApiResponse.Builder<T>()
@@ -77,4 +79,6 @@ public class ApiResponse<T> {
                 ", result=" + result +
                 '}';
     }
+=======
+>>>>>>> 2ccbe6d1a33986ac1da8f46fe88acf1efa9060ba
 }

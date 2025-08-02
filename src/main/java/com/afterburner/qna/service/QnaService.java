@@ -4,6 +4,8 @@ import com.afterburner.common.enums.PostStatus;
 import com.afterburner.qna.model.dto.QnaDTO;
 import com.afterburner.qna.model.entity.QnaEntity;
 import com.afterburner.qna.repository.QnaRepository;
+import com.afterburner.global.exception.QnaNotFoundException;
+import com.afterburner.common.codes.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +34,7 @@ public class QnaService {
         qna.setQnaCreatedAt(LocalDateTime.now());
         qna.setQnaUpdatedAt(LocalDateTime.now());
         qna.setQnaDeletedAt(null);
-        // qna.setUserId(getCurrentUserId());
+        qna.setQnaUserId(qnaDTO.getQnaUserId());
 
         QnaEntity savedQna = qnaRepository.save(qna);
 
@@ -42,6 +44,7 @@ public class QnaService {
                 .qnaContent(savedQna.getQnaContent())
                 .qnaAnswer(savedQna.getQnaAnswer())
                 .qnaStatus(savedQna.getQnaStatus())
+                .qnaUserId(savedQna.getQnaUserId())
                 .qnaCreatedAt(savedQna.getQnaCreatedAt())
                 .qnaUpdatedAt(savedQna.getQnaUpdatedAt())
                 .qnaDeletedAt(savedQna.getQnaDeletedAt())
@@ -61,6 +64,7 @@ public class QnaService {
                         .qnaContent(qna.getQnaContent())
                         .qnaAnswer(qna.getQnaAnswer())
                         .qnaStatus(qna.getQnaStatus())
+                        .qnaUserId(qna.getQnaUserId())
                         .qnaCreatedAt(qna.getQnaCreatedAt())
                         .qnaUpdatedAt(qna.getQnaUpdatedAt())
                         .qnaDeletedAt(qna.getQnaDeletedAt())
@@ -70,10 +74,10 @@ public class QnaService {
 
     public QnaDTO getQnaById(Integer qnaId) {
         QnaEntity qna = qnaRepository.findById(qnaId)
-                .orElseThrow(() -> new RuntimeException("QnA를 찾을 수 없습니다."));
+                .orElseThrow(() -> new QnaNotFoundException(ErrorCode.NOT_FOUND_ERROR, "QnA를 찾을 수 없습니다."));
 
         if (qna.getQnaStatus() != PostStatus.DEFAULT) {
-            throw new RuntimeException("이미 삭제된 QNA입니다..");
+            throw new QnaNotFoundException(ErrorCode.NOT_FOUND_ERROR, "이미 삭제된 QNA입니다..");
         }
 
         return QnaDTO.builder()
@@ -82,6 +86,7 @@ public class QnaService {
                 .qnaContent(qna.getQnaContent())
                 .qnaAnswer(qna.getQnaAnswer())
                 .qnaStatus(qna.getQnaStatus())
+                .qnaUserId(qna.getQnaUserId())
                 .qnaCreatedAt(qna.getQnaCreatedAt())
                 .qnaUpdatedAt(qna.getQnaUpdatedAt())
                 .qnaDeletedAt(qna.getQnaDeletedAt())
@@ -91,7 +96,7 @@ public class QnaService {
     @Transactional
     public QnaDTO updateQna(Integer qnaId, QnaDTO qnaDTO) {
         QnaEntity qna = qnaRepository.findById(qnaId)
-                .orElseThrow(() -> new RuntimeException("해당 QnA를 찾을 수 없습니다."));
+                .orElseThrow(() -> new QnaNotFoundException(ErrorCode.NOT_FOUND_ERROR, "해당 QnA를 찾을 수 없습니다."));
 
         // 로그인 코드 완성되면
         // if (!qna.getUserId().equals(getCurrentUserId())) {
@@ -102,6 +107,7 @@ public class QnaService {
         qna.setQnaContent(qnaDTO.getQnaContent());
         qna.setQnaUpdatedAt(LocalDateTime.now());
         qna.setQnaStatus(PostStatus.DEFAULT);
+        qna.setQnaUserId(qnaDTO.getQnaUserId());
 
         QnaEntity updatedQna = qnaRepository.save(qna);
 
@@ -111,6 +117,7 @@ public class QnaService {
                 .qnaContent(updatedQna.getQnaContent())
                 .qnaAnswer(updatedQna.getQnaAnswer())
                 .qnaStatus(updatedQna.getQnaStatus())
+                .qnaUserId(updatedQna.getQnaUserId())
                 .qnaCreatedAt(updatedQna.getQnaCreatedAt())
                 .qnaUpdatedAt(updatedQna.getQnaUpdatedAt())
                 .qnaDeletedAt(updatedQna.getQnaDeletedAt())
@@ -120,7 +127,7 @@ public class QnaService {
     @Transactional
     public QnaDTO deleteQna(Integer qnaId) {
         QnaEntity qna = qnaRepository.findById(qnaId)
-                .orElseThrow(() -> new RuntimeException("QnA를 찾을 수 없습니다."));
+                .orElseThrow(() -> new QnaNotFoundException(ErrorCode.NOT_FOUND_ERROR, "QnA를 찾을 수 없습니다."));
 
         // if (!qna.getUserId().equals(getCurrentUserId()) && !isCurrentUserAdmin()) {
         //     throw new RuntimeException("You are not authorized to delete this QnA.");
@@ -137,6 +144,7 @@ public class QnaService {
                 .qnaContent(deletedQna.getQnaContent())
                 .qnaAnswer(deletedQna.getQnaAnswer())
                 .qnaStatus(deletedQna.getQnaStatus())
+                .qnaUserId(deletedQna.getQnaUserId())
                 .qnaCreatedAt(deletedQna.getQnaCreatedAt())
                 .qnaUpdatedAt(deletedQna.getQnaUpdatedAt())
                 .qnaDeletedAt(deletedQna.getQnaDeletedAt())
@@ -146,7 +154,7 @@ public class QnaService {
     @Transactional
     public QnaDTO addAnswer(Integer qnaId, QnaDTO qnaDTO) {
         QnaEntity qna = qnaRepository.findById(qnaId)
-                .orElseThrow(() -> new RuntimeException("해당 QnA를 찾을 수 없습니다."));
+                .orElseThrow(() -> new QnaNotFoundException(ErrorCode.NOT_FOUND_ERROR, "해당 QnA를 찾을 수 없습니다."));
 
         qna.setQnaAnswer(qnaDTO.getQnaAnswer());
         qna.setQnaUpdatedAt(LocalDateTime.now());
@@ -159,6 +167,7 @@ public class QnaService {
                 .qnaContent(answeredQna.getQnaContent())
                 .qnaAnswer(answeredQna.getQnaAnswer())
                 .qnaStatus(answeredQna.getQnaStatus())
+                .qnaUserId(answeredQna.getQnaUserId())
                 .qnaCreatedAt(answeredQna.getQnaCreatedAt())
                 .qnaUpdatedAt(answeredQna.getQnaUpdatedAt())
                 .qnaDeletedAt(answeredQna.getQnaDeletedAt())
