@@ -29,7 +29,8 @@ public class SecurityConfig {
         http
                 .cors(cors -> {})
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/v1/users/firebase-login"))
+                        .ignoringRequestMatchers("/api/v1/users/firebase-login")
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterBefore(corsFilter(), UsernamePasswordAuthenticationFilter.class)
                 // 헤더 설정
                 .headers(headers -> headers
@@ -58,11 +59,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedOriginPattern(allowedOrigins);
-<<<<<<< HEAD
-        config.addAllowedOriginPattern("https://10.0.2.2:8080");
-=======
         config.addAllowedOriginPattern(allowedFlutter);
->>>>>>> 2ccbe6d1a33986ac1da8f46fe88acf1efa9060ba
         config.addAllowedOriginPattern("https://*.firebaseapp.com");
         config.addAllowedOriginPattern("https://*.googleapis.com");
         config.addAllowedHeader("Content-Type");

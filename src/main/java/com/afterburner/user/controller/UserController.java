@@ -25,6 +25,35 @@ public class UserController {
                 ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userResponse)));
     }
 
+    // 파이어베이스 유저 로그인
+    @PostMapping("/firebase-login")
+    public ResponseEntity<ApiResponse<UserDTO.UserResponse>> firebaseLogin(
+            @RequestHeader("Authorization") String authorization) {
+        try {
+            // 1. Bearer 토큰 파싱
+            if (authorization == null || !authorization.startsWith("Bearer ")) {
+                System.out.println("🟡🟡🟡 토큰 없음 또는 Bearer 아님!");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ApiResponse.error(HttpStatus.UNAUTHORIZED.value(), "No token provided"));
+            }
+            String idToken = authorization.substring(7);
+
+            // 2. 서비스에 위임 (토큰 검증 + 유저 자동 생성/조회)
+            UserDTO.UserResponse userResponse = userService.firebaseLoginOrRegister(idToken);
+
+            // 3. 성공 응답
+            return ResponseEntity.ok(
+                    ApiResponse.success(userResponse)
+            );
+        } catch (Exception e) {
+            // 4. 실패 응답
+            System.out.println("🔥🔥🔥 CATCH BLOCK 진입!");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(ApiResponse.error(HttpStatus.FORBIDDEN.value(), "토큰 검증 실패: " + e.getMessage()));
+        }
+    }
+
     @PutMapping("/{userId}")
     public CompletableFuture<ResponseEntity<ApiResponse<UserDTO.UserResponse>>> updateUser(@PathVariable Integer userId, @RequestBody UserDTO.UpdateUserRequest request) {
         return userService.updateUser(userId, request).thenApply(userResponse ->
@@ -49,41 +78,6 @@ public class UserController {
                 ResponseEntity.noContent().build());
     }
 
-<<<<<<< HEAD
-
-
-
-    // 파이어베이스 유저 로그인
-    @PostMapping("/firebase-login")
-    public ResponseEntity<ApiResponse<UserDTO.UserResponse>> firebaseLogin(
-            @RequestHeader("Authorization") String authorization) {
-        try {
-            // 1. Bearer 토큰 파싱
-            if (authorization == null || !authorization.startsWith("Bearer ")) {
-                System.out.println("🟡🟡🟡 토큰 없음 또는 Bearer 아님!");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(ApiResponse.error(HttpStatus.UNAUTHORIZED.value(), "No token provided"));
-            }
-            String idToken = authorization.substring(7);
-
-            // 2. 서비스에 위임 (토큰 검증 + 유저 자동 생성/조회)
-            UserDTO.UserResponse userResponse = userService.firebaseLoginOrRegister(idToken);
-
-            // 3. 성공 응답
-            return ResponseEntity.ok(
-                    ApiResponse.success(userResponse)
-            );
-        } catch (Exception e) {
-            // 4. 실패 응답 
-            System.out.println("🔥🔥🔥 CATCH BLOCK 진입!");
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(ApiResponse.error(HttpStatus.FORBIDDEN.value(), "토큰 검증 실패: " + e.getMessage()));
-        }
-    }
-
-
-=======
     @GetMapping("/{userId}/projects")
     public CompletableFuture<ResponseEntity<ApiResponse<List<com.afterburner.project.model.ProjectDTO>>>> getUserProjects(@PathVariable Integer userId) {
         return userService.getUserProjects(userId).thenApply(projects ->
@@ -113,5 +107,4 @@ public class UserController {
         return userService.getUserQuestions(userId).thenApply(questions ->
                 ResponseEntity.ok(ApiResponse.success(questions)));
     }
->>>>>>> 2ccbe6d1a33986ac1da8f46fe88acf1efa9060ba
 }

@@ -17,6 +17,10 @@ public class ApiResponse<T> {
     private String message;
     private T result;
 
+    public <T> ApiResponse(Builder<T> tBuilder) {
+
+    }
+
     public static <T> ApiResponse<T> success(T result) {
         return ApiResponse.<T>builder()
                 .statusCode(SuccessCode.SELECT.getStatus())
@@ -24,26 +28,12 @@ public class ApiResponse<T> {
                 .result(result)
                 .build();
     }
-<<<<<<< HEAD
-
     public static <T> ApiResponse<T> error(int statusCode, String message) {
-    return new ApiResponse.Builder<T>()
-            .statusCode(statusCode)
-            .message(message)
-            .result(null)
-            .build();
-}
-
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public T getResult() {
-        return result;
+        return new ApiResponse.Builder<T>()
+                .statusCode(statusCode)
+                .message(message)
+                .result(null)
+                .build();
     }
 
     public static class Builder<T> {
@@ -79,6 +69,5 @@ public class ApiResponse<T> {
                 ", result=" + result +
                 '}';
     }
-=======
->>>>>>> 2ccbe6d1a33986ac1da8f46fe88acf1efa9060ba
+
 }
