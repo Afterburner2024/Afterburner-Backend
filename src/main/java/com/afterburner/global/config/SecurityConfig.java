@@ -21,7 +21,7 @@ public class SecurityConfig {
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
 
-    @Value("${cors.allowed-flutter")
+    @Value("${cors.allowed-flutter}")
     private String allowedFlutter;
 
     @Bean
