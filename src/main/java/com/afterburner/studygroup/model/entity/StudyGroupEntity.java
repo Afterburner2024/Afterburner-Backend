@@ -13,6 +13,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.afterburner.common.enums.PostStatus;
+import com.afterburner.user.model.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -62,8 +63,12 @@ public class StudyGroupEntity {
 	@Column(name = "studygroup_status", nullable = false) // 기본값, 삭제상태, 신고된 상태
         private PostStatus studyGroupStatus;
 
-	@Column(name = "studygroup_user_id", nullable = false) // 작성자 ID
-	private Integer studyGroupUserId;
+        @Column(name = "studygroup_user_id", nullable = false) // 작성자 ID
+        private Integer studyGroupUserId;
+
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "studygroup_user_id", insertable = false, updatable = false)
+        private User user;
 
 	@Column(name = "studygroup_role", nullable = false)
 	@Enumerated(EnumType.STRING)

@@ -65,7 +65,8 @@ public class UserService {
                 user.setUserEmail(email);
                 user.setUserName(name);
                 user.setUserImage(picture);
-                // 필요한 필드 초기화 가능
+                user.setUserGrade(UserGrade.USER); // 기본 등급을 USER로 설정
+
                 user = userRepository.save(user);
             }
 
@@ -164,7 +165,7 @@ public class UserService {
                         .projectTechStack(project.getProjectTechStack())
                         .projectRecruitmentRoles(project.getProjectRecruitmentRoles())
                         .projectUserId(project.getProjectUserId())
-                        .projectUserName(userRepository.findById(project.getProjectUserId()).map(User::getUserName).orElse(null))
+                        .projectUserName(project.getUser().getUserName())
                         .projectRegion(project.getProjectRegion())
                         .build())
                 .collect(Collectors.toList());
@@ -198,7 +199,7 @@ public class UserService {
                 .projectTechStack(p.getProjectTechStack())
                 .projectRecruitmentRoles(p.getProjectRecruitmentRoles())
                 .projectUserId(p.getProjectUserId())
-                .projectUserName(userRepository.findById(p.getProjectUserId()).map(User::getUserName).orElse(null))
+                .projectUserName(p.getUser().getUserName())
                 .projectRegion(p.getProjectRegion())
                 .build();
     }
@@ -220,7 +221,7 @@ public class UserService {
                         .studyGroupStatus(study.getStudyGroupStatus())
                         .studyGroupMembers(study.getStudyGroupMembers())
                         .studyGroupUserId(study.getStudyGroupUserId())
-                        .studyGroupUserName(userRepository.findById(study.getStudyGroupUserId()).map(User::getUserName).orElse(null))
+                        .studyGroupUserName(study.getUser().getUserName())
                         .studyGroupRole(study.getStudyGroupRole())
                         .build())
                 .collect(Collectors.toList());
@@ -252,7 +253,7 @@ public class UserService {
                 .studyGroupStatus(study.getStudyGroupStatus())
                 .studyGroupMembers(study.getStudyGroupMembers())
                 .studyGroupUserId(study.getStudyGroupUserId())
-                .studyGroupUserName(userRepository.findById(study.getStudyGroupUserId()).map(User::getUserName).orElse(null))
+                .studyGroupUserName(study.getUser().getUserName())
                 .studyGroupRole(study.getStudyGroupRole())
                 .build();
     }

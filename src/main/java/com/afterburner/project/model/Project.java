@@ -8,13 +8,15 @@ import com.afterburner.common.enums.PostStatus;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 
 import jakarta.persistence.Column;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -24,6 +26,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import com.afterburner.user.model.User;
 
 @Getter
 @Setter
@@ -73,8 +76,12 @@ public class Project {
 	@Type(JsonBinaryType.class)
 	private List<String> projectTechStack;
 
-	@Column(name = "project_user_id", nullable = false)
-	private Integer projectUserId;
+        @Column(name = "project_user_id", nullable = false)
+        private Integer projectUserId;
+
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "project_user_id", insertable = false, updatable = false)
+        private User user;
 
 	@Column(name = "project_recruitment_roles", columnDefinition = "jsonb")
 	@Type(JsonBinaryType.class)
